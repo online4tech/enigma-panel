@@ -514,119 +514,57 @@
     sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>')
   };
 
-  /* ---------- Data (built from the reference screenshots only) ---------- */
-  var SECTIONS = [
-    { id:'enigma',   name:'انجما٢',        icon:'tv' },
-    { id:'system',   name:'خدمات النظام',  icon:'settings' },
-    { id:'general',  name:'خدمات عامة',    icon:'grid' },
-    { id:'settings', name:'الإعدادات',     icon:'tools' },
-    { id:'about',    name:'حول',           icon:'info' }
-  ];
-
-  var ITEMS = {
-    enigma: [
-      { id:'plugins',  name:'الإضافات',     desc:'إدارة وتثبيت البلاجينات',                    icon:'link',    open:true },
-      { id:'feeds',    name:'الفيدات',      desc:'تحديث وتثبيت الفيدات',                      icon:'feed' },
-      { id:'safe',     name:'اضافات سييف',  desc:'إدارة وتثبيت البلاجينات',                   icon:'safe' },
-      { id:'softcam',  name:'السوفتكامات',  desc:'إدارة السوفتكامات',                         icon:'softcam' },
-      { id:'picons',   name:'البيكونات',    desc:'تثبيت وإدارة شعارات القنوات',               icon:'picon' },
-      { id:'skins',    name:'السكينات',     desc:'اختيار وتطبيق السكينات',                    icon:'skin' },
-      { id:'panels',   name:'البانلات',     desc:'استكشف بانلات انجما٢ مع روابط المطورين',    icon:'panel' },
-      { id:'display',  name:'العرض',        desc:'تغيير شعارات الإقلاع وأيقونات التحميل',     icon:'display' },
-      { id:'multiboot',name:'ملتي بوت',     desc:'تثبيت وإدارة بلاجينات الملتي بوت ومثبتات الصور', icon:'multiboot' },
-      { id:'novaler',  name:'نوفالر',       desc:'بلاجينات وأدوات لأجهزة نوفالر',             icon:'novaler' },
-      { id:'chsettings',name:'الإعدادات',   desc:'جرب قنوات وترددات جديدة',                   icon:'settings' },
-      { id:'tools',    name:'الأدوات',      desc:'أدوات وإضافات مفيدة',                       icon:'tools' }
-    ],
-    system: [
-      { id:'clean',   name:'تنظيف النظام',   desc:'تنظيف الذاكرة والملفات المؤقتة',  icon:'clean' },
-      { id:'storage', name:'إدارة التخزين',  desc:'فحص القرص الصلب واليو إس بي',     icon:'multiboot' },
-      { id:'backup',  name:'النسخ الاحتياطي',desc:'نسخة احتياطية كاملة من الصورة',   icon:'backup' },
-      { id:'restart', name:'إعادة التشغيل',  desc:'إعادة تشغيل الواجهة أو الجهاز',   icon:'restart' },
-      { id:'net',     name:'خدمات الشبكة',   desc:'إدارة الشبكة والاتصال',           icon:'globe' }
-    ],
-    general: [
-      { id:'weather', name:'الطقس',      desc:'حالة الطقس لمدينتك',        icon:'sun' },
-      { id:'news',    name:'الأخبار',    desc:'آخر الأخبار والعناوين',      icon:'feed' },
-      { id:'web',     name:'التصفح',     desc:'خدمات الويب العامة',         icon:'globe' },
-      { id:'radio',   name:'الراديو',    desc:'محطات راديو عبر الإنترنت',   icon:'music' }
-    ],
-    settings: [
-      { id:'netset',  name:'إعدادات الشبكة', desc:'ضبط الاتصال السلكي واللاسلكي', icon:'globe' },
-      { id:'picset',  name:'إعدادات الصورة', desc:'الدقة ونسبة العرض',            icon:'display' },
-      { id:'audset',  name:'إعدادات الصوت',  desc:'مستوى الصوت والمخرجات',        icon:'music' },
-      { id:'langset', name:'اللغة',          desc:'لغة الواجهة والترجمة',         icon:'book' }
-    ]
-  };
-
-  var CATEGORIES = [
-    { id:'audio',   name:'الصوتيات',        count:15, icon:'music' },
-    { id:'backup',  name:'النسخ الاحتياطي', count:3,  icon:'backup' },
-    { id:'epg',     name:'دليل البرامج',    count:11, icon:'book' },
-    { id:'crypt',   name:'التشفير',         count:20, icon:'lock' },
-    { id:'free',    name:'مجاني',           count:16, icon:'gift' },
-    { id:'games',   name:'الألعاب',         count:10, icon:'game' },
-    { id:'iptv',    name:'أي بي تي في',     count:36, icon:'iptv' },
-    { id:'quran',   name:'القرآن',          count:12, icon:'quran' },
-    { id:'picons',  name:'البيكونات',       count:8,  icon:'picon' },
-    { id:'config',  name:'الإعدادات',       count:4,  icon:'settings' },
-    { id:'sport',   name:'الرياضة',         count:5,  icon:'sport' }
-  ];
-
-  var PLUGINS = {
-    audio: [
-      { name:'Alkuds',                ver:'r214',     installed:true,  desc:'الصوتيات القدس اي بي اوديو' },
-      { name:'Audiomerge',            ver:'4.0',      installed:false, desc:'دمج ومزامنة المسارات الصوتية' },
-      { name:'AudioShift',            ver:'1.2.4.r4', installed:false, desc:'ضبط تأخير الصوت ومزامنته مع الصورة' },
-      { name:'AudioSelectionPatcher', ver:'1.3',      installed:true,  desc:'تحسين قائمة اختيار المسارات الصوتية' },
-      { name:'Ipaudio (3)',           ver:'',         installed:false, desc:'تشغيل الصوتيات عبر أي بي' },
-      { name:'Ipaudiopro (2)',        ver:'',         installed:false, desc:'نسخة احترافية من مشغل الصوتيات' },
-      { name:'Ipaudioplus',           ver:'2.6.0',    installed:false, desc:'مشغل صوتيات موسع بمزايا إضافية' },
-      { name:'Ipstreamer',            ver:'1.3',      installed:false, desc:'بث الصوت عبر الشبكة المحلية' }
-    ],
-    iptv: [
-      { name:'E2iPlayer',   ver:'',      installed:false, desc:'مشغل محتوى وخدمات عبر الإنترنت' },
-      { name:'XStreamity',  ver:'4.x',   installed:false, desc:'تشغيل قوائم أي بي تي في بواجهة مرتبة' },
-      { name:'Jedi Maker',  ver:'',      installed:false, desc:'إنشاء باقات من قوائم التشغيل' },
-      { name:'IPTV Player', ver:'1.0',   installed:false, desc:'مشغل قوائم التشغيل المباشر' }
-    ],
-    backup: [
-      { name:'BackupSuite', ver:'', installed:false, desc:'نسخ احتياطي كامل للصورة والإعدادات' },
-      { name:'AutoBackup',  ver:'', installed:false, desc:'نسخ احتياطي تلقائي مجدول' }
-    ],
-    epg: [
-      { name:'EPGImport',     ver:'', installed:false, desc:'استيراد دليل البرامج الإلكتروني' },
-      { name:'CrossEPG',      ver:'', installed:false, desc:'تحميل دليل البرامج من مصادر متعددة' },
-      { name:'EPG Translator',ver:'', installed:false, desc:'ترجمة عناوين دليل البرامج' }
-    ],
-    crypt: [
-      { name:'Softcam Manager', ver:'', installed:false, desc:'إدارة وتشغيل السوفتكامات' },
-      { name:'Key Updater',     ver:'', installed:false, desc:'تحديث ملفات المفاتيح' }
-    ],
-    free: [
-      { name:'YouTube',   ver:'', installed:false, desc:'مشاهدة يوتيوب على الرسيفر' },
-      { name:'Weather',   ver:'', installed:false, desc:'حالة الطقس على الشاشة' },
-      { name:'MediaPortal', ver:'', installed:false, desc:'بوابة وسائط متعددة' }
-    ],
-    games: [
-      { name:'Games Pack', ver:'', installed:false, desc:'حزمة ألعاب خفيفة للرسيفر' }
-    ],
-    quran: [
-      { name:'Quran Player', ver:'', installed:false, desc:'تلاوات ومصاحف صوتية' },
-      { name:'Azkar',        ver:'', installed:false, desc:'أذكار وأدعية يومية' }
-    ],
-    picons: [
-      { name:'Picon Manager', ver:'', installed:false, desc:'تحميل وتحديث شعارات القنوات' },
-      { name:'SNP Picons',    ver:'', installed:false, desc:'شعارات بأسماء الخدمات' }
-    ],
-    config: [
-      { name:'AJPanel',     ver:'', installed:false, desc:'إدارة الملفات والقنوات والإعدادات' },
-      { name:'DreamExplorer', ver:'', installed:false, desc:'تصفح ملفات الجهاز' }
-    ],
-    sport: [
-      { name:'Sport Portal', ver:'', installed:false, desc:'أخبار ونتائج رياضية' }
-    ]
-  };
+  /* ---------- Data: loaded from the supplied Enigma2 catalog ---------- */
+  var CATEGORIES = [];
+  var PLUGINS = {};
+  function escapeHtml(value){
+    return String(value == null ? '' : value).replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function loadCommandData(){
+    fetch('./data/commands.json',{cache:'no-store'})
+      .then(function(response){ if(!response.ok) throw new Error('HTTP '+response.status); return response.json(); })
+      .then(function(data){
+        var entries = [];
+        (data.main || []).forEach(function(section){
+          var rows = data[section.section];
+          if(Array.isArray(rows) && rows.length && rows[0] && rows[0].section){
+            rows.forEach(function(child){
+              entries.push({id:child.section,name:section.title+' — '+child.title,icon:'link'});
+            });
+          }else{
+            entries.push({id:section.section,name:section.title,icon:'link'});
+          }
+        });
+        CATEGORIES = entries.map(function(entry){
+          var rows = Array.isArray(data[entry.id]) ? data[entry.id] : [];
+          PLUGINS[entry.id] = rows.filter(function(row){return row && typeof row==='object' && row.name;}).map(function(row){
+            var label = String(row.name || '');
+            var match = label.match(/[（(]([^）)]+)[）)]/);
+            return {
+              name:label,
+              desc:match ? match[1] : 'عنصر من كتالوج Enigma2',
+              cmd:row.cmd || '',
+              path:row.path || '',
+              remove_cmd:row.remove_cmd || '',
+              installed:null
+            };
+          });
+          return {id:entry.id,name:entry.name,count:PLUGINS[entry.id].length,icon:entry.icon};
+        });
+        if(CATEGORIES.length && !PLUGINS[state.category]){
+          state.category=CATEGORIES[0].id;
+        }else if(CATEGORIES.length && !CATEGORIES.some(function(c){return c.id===state.category;})){
+          state.category=CATEGORIES[0].id;
+        }
+        if(state.inBrowser){renderCats();renderPlugins();}
+      })
+      .catch(function(error){
+        console.error('تعذر تحميل كتالوج الأوامر:',error);
+        toast('تعذر تحميل بيانات الأقسام. حاول تحديث الصفحة.');
+      });
+  }
 
   /* ---------- State ---------- */
   var state = {
@@ -763,21 +701,20 @@
   function renderPlugins(){
     var list = currentPlugins();
     var info = catInfo();
-    $('catTitle').textContent = info.name;
-    $('catCount').textContent = list.length + ' حزمة — صفحة 1/1' + (state.query ? ' — نتائج البحث' : '');
+    $('catTitle').textContent = info ? info.name : 'الأقسام';
+    $('catCount').textContent = list.length + ' عنصر — صفحة 1/1' + (state.query ? ' — نتائج البحث' : '');
     var box = $('plugList');
     if (!list.length){
-      box.innerHTML = '<div class="empty">لا توجد إضافات مطابقة في هذه الفئة.</div>';
+      box.innerHTML = '<div class="empty">لا توجد أوامر في هذا القسم أو لا توجد نتائج مطابقة.</div>';
       renderDetail(null);
       return;
     }
     if (state.selectedPlugin >= list.length) state.selectedPlugin = 0;
     box.innerHTML = list.map(function(p, i){
       return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" data-idx="'+i+'">'
-        + '<span class="thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</span>'
-        + '<span class="nm">'+p.name+'</span>'
-        + (p.ver ? '<span class="ver">'+p.ver+'</span>' : '')
-        + (p.installed ? '<span class="badge installed">مثبت</span>' : '<span class="badge free">تثبيت</span>')
+        + '<span class="thumb">'+ICONS.link+'</span>'
+        + '<span class="nm">'+escapeHtml(p.name)+'</span>'
+        + '<span class="badge free">'+(p.cmd?'أمر متاح':'بدون أمر')+'</span>'
         + '</button>';
     }).join('');
     var rows = box.querySelectorAll('[data-idx]');
@@ -790,32 +727,44 @@
     renderDetail(list[state.selectedPlugin]);
   }
 
+  function copyCatalogCommand(value){
+    if(!value){toast('لا يوجد أمر متاح لهذا العنصر');return;}
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(value).then(function(){toast('تم نسخ الأمر');})
+        .catch(function(){toast('تعذر النسخ — انسخ الأمر يدويًا');});
+    }else{
+      var field=document.createElement('textarea');
+      field.value=value;field.style.position='fixed';field.style.opacity='0';
+      document.body.appendChild(field);field.select();
+      try{document.execCommand('copy');toast('تم نسخ الأمر');}
+      catch(e){toast('تعذر النسخ — انسخ الأمر يدويًا');}
+      document.body.removeChild(field);
+    }
+  }
+
   function renderDetail(p){
     var box = $('detailCard');
     var info = catInfo();
     if (!p){
-      box.innerHTML = '<p style="color:var(--muted);margin:26px 0">اختر إضافة من القائمة لعرض تفاصيلها.</p>';
+      box.innerHTML = '<p style="color:var(--muted);margin:26px 0">اختر عنصرًا من القائمة لعرض الأمر والمسار.</p>';
       return;
     }
     box.innerHTML =
-      '<div class="big-thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</div>'
-      + '<h2>'+p.name+'</h2>'
-      + (p.ver ? '<div class="ver">الإصدار '+p.ver+'</div>' : '<div class="ver">إضافة انجما٢</div>')
+      '<div class="big-thumb">'+ICONS.link+'</div>'
+      + '<h2>'+escapeHtml(p.name)+'</h2>'
+      + '<div class="ver">عنصر من كتالوج Enigma2</div>'
       + '<div class="meta">'
-      +   '<div class="line"><span class="k">الحالة</span><span class="v '+(p.installed?'inst':'notinst')+'">'+(p.installed?'مثبت':'غير مثبت')+'</span></div>'
-      +   '<div class="line"><span class="k">الفئة</span><span class="v">'+info.name+'</span></div>'
+      +   '<div class="line"><span class="k">القسم</span><span class="v">'+escapeHtml(info ? info.name : '')+'</span></div>'
+      +   '<div class="line"><span class="k">مسار التثبيت</span><span class="v" style="direction:ltr;text-align:left;word-break:break-all">'+escapeHtml(p.path || 'غير محدد')+'</span></div>'
       + '</div>'
-      + '<p class="desc">'+p.desc+'</p>'
-      + '<div class="act">'
-      + (p.installed
-          ? '<button class="btn danger" id="detailAct">إزالة</button>'
-          : '<button class="btn gold" id="detailAct">تثبيت</button>')
-      + '</div>';
-    $('detailAct').addEventListener('click', function(){
-      p.installed = !p.installed;
-      toast(p.installed ? ('تم تثبيت ' + p.name) : ('تمت إزالة ' + p.name));
-      renderPlugins();
-    });
+      + '<p class="desc">'+escapeHtml(p.desc)+'</p>'
+      + (p.cmd ? '<div style="text-align:right;margin:12px 0"><div style="color:var(--gold);font-weight:800;margin-bottom:7px">أمر التثبيت</div><pre dir="ltr" style="white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;background:#090d19;border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.7 monospace">'+escapeHtml(p.cmd)+'</pre><button class="btn gold" id="copyInstall">نسخ أمر التثبيت</button></div>' : '<p class="desc">لا يوجد أمر تثبيت مسجل لهذا العنصر.</p>')
+      + (p.remove_cmd ? '<div style="text-align:right;margin:12px 0"><div style="color:var(--muted);font-weight:800;margin-bottom:7px">أمر الإزالة</div><pre dir="ltr" style="white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;background:#090d19;border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.7 monospace">'+escapeHtml(p.remove_cmd)+'</pre><button class="btn" id="copyRemove">نسخ أمر الإزالة</button></div>' : '')
+      + '<p class="desc" style="font-size:12.5px">للحماية، البانل يعرض الأوامر وينسخها فقط ولا ينفذ سكريبتات خارجية تلقائيًا. راجع مصدر الأمر وتوافقه مع صورة الرسيفر قبل استخدامه.</p>';
+    var install=$('copyInstall');
+    if(install) install.addEventListener('click',function(){copyCatalogCommand(p.cmd);});
+    var remove=$('copyRemove');
+    if(remove) remove.addEventListener('click',function(){copyCatalogCommand(p.remove_cmd);});
   }
 
   function openBrowser(){
@@ -891,6 +840,7 @@
   /* ---------- Init ---------- */
   renderNav();
   renderCenter();
+  loadCommandData();
 })();
 </script>
 </body>
