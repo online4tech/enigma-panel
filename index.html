@@ -32,7 +32,7 @@
   }
   *{box-sizing:border-box}
   [hidden]{display:none !important}
-  html,body{margin:0;padding:0}
+  html,body{margin:0;padding:0;height:100%}
   body{
     background:
       radial-gradient(900px 500px at 85% -10%, rgba(60,72,140,.28), transparent 60%),
@@ -40,7 +40,9 @@
       var(--bg);
     color:var(--text);
     font-family:"Tajawal","Cairo",system-ui,sans-serif;
-    min-height:100vh;
+    height:100dvh;
+    display:flex;flex-direction:column;
+    overflow:hidden;
     -webkit-font-smoothing:antialiased;
   }
   button,[role="button"],input,select{font-family:inherit}
@@ -51,7 +53,7 @@
   .topbar{
     display:flex;align-items:center;gap:16px;flex-wrap:wrap;
     padding:14px 22px 10px;
-    max-width:1460px;margin:0 auto;
+    max-width:1460px;width:100%;margin:0 auto;flex:none;
   }
   .brand{text-align:right}
   .brand .name{
@@ -93,9 +95,19 @@
 
   /* ---------- Layout ---------- */
   .layout{
-    max-width:1460px;margin:0 auto;padding:8px 22px 96px;
-    display:grid;grid-template-columns:250px 1fr 300px;gap:16px;align-items:start;
+    max-width:1460px;width:100%;margin:0 auto;padding:8px 22px 18px;
+    display:grid;grid-template-columns:250px 1fr 300px;gap:16px;align-items:stretch;
+    flex:1;min-height:0;
   }
+  /* Only the columns scroll — the page itself stays fixed */
+  .layout > *{
+    min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+  }
+  .layout > *::-webkit-scrollbar{width:8px}
+  .layout > *::-webkit-scrollbar-track{background:transparent}
+  .layout > *::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+  .layout > *::-webkit-scrollbar-thumb:hover{background:var(--gold2)}
   .panel{
     background:linear-gradient(180deg,var(--surface2),var(--surface));
     border:1px solid var(--line);border-radius:var(--radius);
@@ -103,6 +115,8 @@
   .panel h3{
     margin:0;padding:13px 18px 9px;color:var(--muted);font-size:13px;font-weight:700;
     letter-spacing:.02em;
+    position:sticky;top:0;z-index:2;background:var(--surface2);
+    border-radius:var(--radius) var(--radius) 0 0;
   }
 
   /* Right nav */
@@ -122,7 +136,10 @@
   .nav-list button.active svg{color:var(--gold)}
 
   /* Center head */
-  .center-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:2px 4px 12px;flex-wrap:wrap}
+  .center-head{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:10px 4px 12px;flex-wrap:wrap;
+    position:sticky;top:0;z-index:5;background:rgba(10,14,28,.94);backdrop-filter:blur(8px);
+  }
   .center-head h1{font-family:"Cairo",sans-serif;font-size:27px;font-weight:800;margin:0}
   .center-head .count{color:var(--muted);font-size:14.5px;font-weight:500}
   .view-toggle{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
@@ -270,7 +287,7 @@
 
   /* ---------- Bottom remote bar ---------- */
   .remote{
-    position:sticky;bottom:0;z-index:20;
+    flex:none;z-index:20;
     background:rgba(13,17,34,.92);backdrop-filter:blur(10px);
     border-top:1px solid var(--line);
   }
@@ -304,7 +321,7 @@
   .toast.show{opacity:1;transform:translateX(50%) translateY(0)}
 
   .compat{
-    max-width:1460px;margin:0 auto;padding:0 22px 4px;
+    max-width:1460px;width:100%;margin:0 auto;padding:0 22px 4px;flex:none;
     display:flex;gap:9px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13.5px;font-weight:600;
   }
   .compat .chip{
@@ -316,6 +333,12 @@
     .layout,.layout.browser{grid-template-columns:210px 1fr}
     .sys-col{grid-column:1 / -1}
     .detail-col{grid-column:1 / -1}
+    /* Stacked layout: the columns area scrolls as one region, page stays fixed */
+    .layout,.layout.browser{
+      display:flex;flex-direction:column;
+      overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+    }
+    .layout > *{flex:none;min-height:auto;overflow:visible}
   }
   @media (max-width:720px){
     .remote{position:static}
@@ -514,7 +537,7 @@
     sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>')
   };
 
-  /* ---------- Data: original home sections plus live command catalog ---------- */
+  /* ---------- Data (built from the reference screenshots only) ---------- */
   var SECTIONS = [
     { id:'enigma',   name:'انجما٢',        icon:'tv' },
     { id:'system',   name:'خدمات النظام',  icon:'settings' },
@@ -559,36 +582,74 @@
     ]
   };
 
-  var CATEGORIES = [];
-  var PLUGINS = {};
-  function escapeHtml(value){
-    return String(value == null ? '' : value).replace(/[&<>"']/g,function(ch){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
-    });
-  }
-  function loadCommandData(){
-    fetch('./data/commands.json',{cache:'no-store'})
-      .then(function(response){if(!response.ok) throw new Error('HTTP '+response.status);return response.json();})
-      .then(function(data){
-        var entries=[];
-        (data.main||[]).forEach(function(section){
-          var rows=data[section.section];
-          if(Array.isArray(rows) && rows.length && rows[0] && rows[0].section){
-            rows.forEach(function(child){entries.push({id:child.section,name:section.title+' — '+child.title,rows:data[child.section]||[]});});
-          }else entries.push({id:section.section,name:section.title,rows:Array.isArray(rows)?rows:[]});
-        });
-        CATEGORIES=entries.map(function(entry){
-          PLUGINS[entry.id]=entry.rows.filter(function(row){return row&&typeof row==='object'&&row.name;}).map(function(row){
-            var label=String(row.name||''),match=label.match(/[（(]([^）)]+)[）)]/);
-            return {name:label,desc:match?match[1]:'عنصر من كتالوج Enigma2',cmd:row.cmd||'',path:row.path||'',remove_cmd:row.remove_cmd||''};
-          });
-          return {id:entry.id,name:entry.name,count:PLUGINS[entry.id].length,icon:'link'};
-        });
-        if(CATEGORIES.length&&!CATEGORIES.some(function(c){return c.id===state.category;})) state.category=CATEGORIES[0].id;
-        if(state.inBrowser){renderCats();renderPlugins();}
-      })
-      .catch(function(error){console.error('تعذر تحميل كتالوج الأوامر:',error);toast('تعذر تحميل بيانات الأوامر. حاول تحديث الصفحة.');});
-  }
+  var CATEGORIES = [
+    { id:'audio',   name:'الصوتيات',        count:15, icon:'music' },
+    { id:'backup',  name:'النسخ الاحتياطي', count:3,  icon:'backup' },
+    { id:'epg',     name:'دليل البرامج',    count:11, icon:'book' },
+    { id:'crypt',   name:'التشفير',         count:20, icon:'lock' },
+    { id:'free',    name:'مجاني',           count:16, icon:'gift' },
+    { id:'games',   name:'الألعاب',         count:10, icon:'game' },
+    { id:'iptv',    name:'أي بي تي في',     count:36, icon:'iptv' },
+    { id:'quran',   name:'القرآن',          count:12, icon:'quran' },
+    { id:'picons',  name:'البيكونات',       count:8,  icon:'picon' },
+    { id:'config',  name:'الإعدادات',       count:4,  icon:'settings' },
+    { id:'sport',   name:'الرياضة',         count:5,  icon:'sport' }
+  ];
+
+  var PLUGINS = {
+    audio: [
+      { name:'Alkuds',                ver:'r214',     installed:true,  desc:'الصوتيات القدس اي بي اوديو' },
+      { name:'Audiomerge',            ver:'4.0',      installed:false, desc:'دمج ومزامنة المسارات الصوتية' },
+      { name:'AudioShift',            ver:'1.2.4.r4', installed:false, desc:'ضبط تأخير الصوت ومزامنته مع الصورة' },
+      { name:'AudioSelectionPatcher', ver:'1.3',      installed:true,  desc:'تحسين قائمة اختيار المسارات الصوتية' },
+      { name:'Ipaudio (3)',           ver:'',         installed:false, desc:'تشغيل الصوتيات عبر أي بي' },
+      { name:'Ipaudiopro (2)',        ver:'',         installed:false, desc:'نسخة احترافية من مشغل الصوتيات' },
+      { name:'Ipaudioplus',           ver:'2.6.0',    installed:false, desc:'مشغل صوتيات موسع بمزايا إضافية' },
+      { name:'Ipstreamer',            ver:'1.3',      installed:false, desc:'بث الصوت عبر الشبكة المحلية' }
+    ],
+    iptv: [
+      { name:'E2iPlayer',   ver:'',      installed:false, desc:'مشغل محتوى وخدمات عبر الإنترنت' },
+      { name:'XStreamity',  ver:'4.x',   installed:false, desc:'تشغيل قوائم أي بي تي في بواجهة مرتبة' },
+      { name:'Jedi Maker',  ver:'',      installed:false, desc:'إنشاء باقات من قوائم التشغيل' },
+      { name:'IPTV Player', ver:'1.0',   installed:false, desc:'مشغل قوائم التشغيل المباشر' }
+    ],
+    backup: [
+      { name:'BackupSuite', ver:'', installed:false, desc:'نسخ احتياطي كامل للصورة والإعدادات' },
+      { name:'AutoBackup',  ver:'', installed:false, desc:'نسخ احتياطي تلقائي مجدول' }
+    ],
+    epg: [
+      { name:'EPGImport',     ver:'', installed:false, desc:'استيراد دليل البرامج الإلكتروني' },
+      { name:'CrossEPG',      ver:'', installed:false, desc:'تحميل دليل البرامج من مصادر متعددة' },
+      { name:'EPG Translator',ver:'', installed:false, desc:'ترجمة عناوين دليل البرامج' }
+    ],
+    crypt: [
+      { name:'Softcam Manager', ver:'', installed:false, desc:'إدارة وتشغيل السوفتكامات' },
+      { name:'Key Updater',     ver:'', installed:false, desc:'تحديث ملفات المفاتيح' }
+    ],
+    free: [
+      { name:'YouTube',   ver:'', installed:false, desc:'مشاهدة يوتيوب على الرسيفر' },
+      { name:'Weather',   ver:'', installed:false, desc:'حالة الطقس على الشاشة' },
+      { name:'MediaPortal', ver:'', installed:false, desc:'بوابة وسائط متعددة' }
+    ],
+    games: [
+      { name:'Games Pack', ver:'', installed:false, desc:'حزمة ألعاب خفيفة للرسيفر' }
+    ],
+    quran: [
+      { name:'Quran Player', ver:'', installed:false, desc:'تلاوات ومصاحف صوتية' },
+      { name:'Azkar',        ver:'', installed:false, desc:'أذكار وأدعية يومية' }
+    ],
+    picons: [
+      { name:'Picon Manager', ver:'', installed:false, desc:'تحميل وتحديث شعارات القنوات' },
+      { name:'SNP Picons',    ver:'', installed:false, desc:'شعارات بأسماء الخدمات' }
+    ],
+    config: [
+      { name:'AJPanel',     ver:'', installed:false, desc:'إدارة الملفات والقنوات والإعدادات' },
+      { name:'DreamExplorer', ver:'', installed:false, desc:'تصفح ملفات الجهاز' }
+    ],
+    sport: [
+      { name:'Sport Portal', ver:'', installed:false, desc:'أخبار ونتائج رياضية' }
+    ]
+  };
 
   /* ---------- State ---------- */
   var state = {
@@ -694,46 +755,96 @@
     state.viewMode='grid'; this.classList.add('active'); $('listModeBtn').classList.remove('active'); renderCenter();
   });
 
-  /* ---------- Plugins browser: display commands without changing the panel design ---------- */
+  /* ---------- Plugins browser ---------- */
   function currentPlugins(){
-    var list=PLUGINS[state.category]||[];
-    if(!state.query)return list;
-    var q=state.query.toLowerCase();
-    return list.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||p.desc.toLowerCase().indexOf(q)>-1||p.path.toLowerCase().indexOf(q)>-1;});
+    var list = PLUGINS[state.category] || [];
+    if (!state.query) return list;
+    var q = state.query.toLowerCase();
+    return list.filter(function(p){ return p.name.toLowerCase().indexOf(q) > -1 || p.desc.indexOf(state.query) > -1; });
   }
-  function catInfo(){return CATEGORIES.filter(function(c){return c.id===state.category;})[0]||null;}
+  function catInfo(){
+    return CATEGORIES.filter(function(c){ return c.id===state.category; })[0];
+  }
+
   function renderCats(){
-    $('catList').innerHTML=CATEGORIES.map(function(c){return '<li><button data-cat="'+escapeHtml(c.id)+'" class="'+(state.category===c.id?'active':'')+'"><span>'+escapeHtml(c.name)+'</span><span class="cnt">'+c.count+'</span></button></li>';}).join('');
-    var idx=CATEGORIES.findIndex(function(c){return c.id===state.category;});$('catFoot').textContent=(idx+1)+' / '+CATEGORIES.length;
-    var btns=$('catList').querySelectorAll('button');
-    for(var i=0;i<btns.length;i++)btns[i].addEventListener('click',function(){state.category=this.getAttribute('data-cat');state.selectedPlugin=0;renderCats();renderPlugins();});
+    $('catList').innerHTML = CATEGORIES.map(function(c){
+      return '<li><button data-cat="'+c.id+'" class="'+(state.category===c.id?'active':'')+'">'
+        + '<span>'+c.name+'</span><span class="cnt">'+c.count+'</span></button></li>';
+    }).join('');
+    var idx = CATEGORIES.findIndex(function(c){ return c.id===state.category; });
+    $('catFoot').textContent = (idx+1) + ' / ' + CATEGORIES.length;
+    var btns = $('catList').querySelectorAll('button');
+    for (var i=0;i<btns.length;i++){
+      btns[i].addEventListener('click', function(){
+        state.category = this.getAttribute('data-cat');
+        state.selectedPlugin = 0;
+        renderCats(); renderPlugins();
+      });
+    }
   }
+
   function renderPlugins(){
-    var list=currentPlugins(),info=catInfo();$('catTitle').textContent=info?info.name:'الأقسام';
-    $('catCount').textContent=list.length+' أمر — صفحة 1/1'+(state.query?' — نتائج البحث':'');
-    var box=$('plugList');
-    if(!list.length){box.innerHTML='<div class="empty">لا توجد أوامر في هذا القسم أو لا توجد نتائج مطابقة.</div>';renderDetail(null);return;}
-    if(state.selectedPlugin>=list.length)state.selectedPlugin=0;
-    box.innerHTML=list.map(function(p,i){return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" data-idx="'+i+'"><span class="thumb">'+ICONS.link+'</span><span class="nm">'+escapeHtml(p.name)+'</span><span class="badge free">'+(p.cmd?'أمر متاح':'بدون أمر')+'</span></button>';}).join('');
-    var rows=box.querySelectorAll('[data-idx]');for(var i=0;i<rows.length;i++)rows[i].addEventListener('click',function(){state.selectedPlugin=parseInt(this.getAttribute('data-idx'),10);renderPlugins();});
+    var list = currentPlugins();
+    var info = catInfo();
+    $('catTitle').textContent = info.name;
+    $('catCount').textContent = list.length + ' حزمة — صفحة 1/1' + (state.query ? ' — نتائج البحث' : '');
+    var box = $('plugList');
+    if (!list.length){
+      box.innerHTML = '<div class="empty">لا توجد إضافات مطابقة في هذه الفئة.</div>';
+      renderDetail(null);
+      return;
+    }
+    if (state.selectedPlugin >= list.length) state.selectedPlugin = 0;
+    box.innerHTML = list.map(function(p, i){
+      return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" data-idx="'+i+'">'
+        + '<span class="thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</span>'
+        + '<span class="nm">'+p.name+'</span>'
+        + (p.ver ? '<span class="ver">'+p.ver+'</span>' : '')
+        + (p.installed ? '<span class="badge installed">مثبت</span>' : '<span class="badge free">تثبيت</span>')
+        + '</button>';
+    }).join('');
+    var rows = box.querySelectorAll('[data-idx]');
+    for (var i=0;i<rows.length;i++){
+      rows[i].addEventListener('click', function(){
+        state.selectedPlugin = parseInt(this.getAttribute('data-idx'),10);
+        renderPlugins();
+      });
+    }
     renderDetail(list[state.selectedPlugin]);
   }
-  function copyCatalogCommand(value){
-    if(!value){toast('لا يوجد أمر متاح لهذا العنصر');return;}
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(value).then(function(){toast('تم نسخ الأمر');}).catch(function(){toast('تعذر النسخ — انسخ الأمر يدويًا');});
-    else{var field=document.createElement('textarea');field.value=value;field.style.position='fixed';field.style.opacity='0';document.body.appendChild(field);field.select();try{document.execCommand('copy');toast('تم نسخ الأمر');}catch(e){toast('تعذر النسخ — انسخ الأمر يدويًا');}document.body.removeChild(field);}
-  }
+
   function renderDetail(p){
-    var box=$('detailCard'),info=catInfo();
-    if(!p){box.innerHTML='<p style="color:var(--muted);margin:26px 0">اختر عنصرًا من القائمة لعرض الأمر والمسار.</p>';return;}
-    box.innerHTML='<div class="big-thumb">'+ICONS.link+'</div><h2>'+escapeHtml(p.name)+'</h2><div class="ver">عنصر من كتالوج Enigma2</div>'
-      +'<div class="meta"><div class="line"><span class="k">القسم</span><span class="v">'+escapeHtml(info?info.name:'')+'</span></div><div class="line"><span class="k">مسار التثبيت</span><span class="v" style="direction:ltr;text-align:left;word-break:break-all">'+escapeHtml(p.path||'غير محدد')+'</span></div></div>'
-      +'<p class="desc">'+escapeHtml(p.desc)+'</p>'
-      +(p.cmd?'<div style="text-align:right;margin:12px 0"><div style="color:var(--gold);font-weight:800;margin-bottom:7px">أمر التثبيت</div><pre dir="ltr" style="white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;background:#090d19;border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.7 monospace">'+escapeHtml(p.cmd)+'</pre><button class="btn gold" id="copyInstall">نسخ أمر التثبيت</button></div>':'<p class="desc">لا يوجد أمر تثبيت مسجل لهذا العنصر.</p>')
-      +(p.remove_cmd?'<div style="text-align:right;margin:12px 0"><div style="color:var(--muted);font-weight:800;margin-bottom:7px">أمر الإزالة</div><pre dir="ltr" style="white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;background:#090d19;border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.7 monospace">'+escapeHtml(p.remove_cmd)+'</pre><button class="btn" id="copyRemove">نسخ أمر الإزالة</button></div>':'')
-      +'<p class="desc" style="font-size:12.5px">البانل يعرض الأوامر وينسخها فقط ولا ينفذها تلقائيًا. راجع مصدر الأمر وتوافقه مع صورة الرسيفر قبل استخدامه.</p>';
-    var install=$('copyInstall');if(install)install.addEventListener('click',function(){copyCatalogCommand(p.cmd);});
-    var remove=$('copyRemove');if(remove)remove.addEventListener('click',function(){copyCatalogCommand(p.remove_cmd);});
+    var box = $('detailCard');
+    var info = catInfo();
+    if (!p){
+      box.innerHTML = '<p style="color:var(--muted);margin:26px 0">اختر إضافة من القائمة لعرض تفاصيلها.</p>';
+      return;
+    }
+    box.innerHTML =
+      '<div class="big-thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</div>'
+      + '<h2>'+p.name+'</h2>'
+      + (p.ver ? '<div class="ver">الإصدار '+p.ver+'</div>' : '<div class="ver">إضافة انجما٢</div>')
+      + '<div class="meta">'
+      +   '<div class="line"><span class="k">الحالة</span><span class="v '+(p.installed?'inst':'notinst')+'">'+(p.installed?'مثبت':'غير مثبت')+'</span></div>'
+      +   '<div class="line"><span class="k">الفئة</span><span class="v">'+info.name+'</span></div>'
+      + '</div>'
+      + '<p class="desc">'+p.desc+'</p>'
+      + '<div class="act">'
+      + (p.installed
+          ? '<button class="btn danger" id="detailAct">إزالة</button>'
+          : '<button class="btn gold" id="detailAct">تثبيت</button>')
+      + '</div>';
+    $('detailAct').addEventListener('click', function(){
+      p.installed = !p.installed;
+      toast(p.installed ? ('تم تثبيت ' + p.name) : ('تمت إزالة ' + p.name));
+      renderPlugins();
+    });
+  }
+
+  function resetCols(layout){
+    layout.scrollTop = 0;
+    var kids = layout.children;
+    for (var i=0;i<kids.length;i++) kids[i].scrollTop = 0;
   }
 
   function openBrowser(){
@@ -745,7 +856,7 @@
     $('searchWrap').hidden = false;
     $('topActions').hidden = true;
     renderCats(); renderPlugins();
-    window.scrollTo({top:0, behavior:'smooth'});
+    resetCols($('browserLayout'));
   }
   function closeBrowser(){
     state.inBrowser = false;
@@ -756,7 +867,7 @@
     $('searchWrap').hidden = true;
     $('topActions').hidden = false;
     state.query=''; $('searchInput').value='';
-    window.scrollTo({top:0, behavior:'smooth'});
+    resetCols($('homeLayout'));
   }
   $('backBtn').addEventListener('click', closeBrowser);
 
@@ -797,8 +908,8 @@
       else if (act === 'recent') toast('عرض أحدث الإضافات والمحتوى المتعدد');
       else if (act === 'remove'){
         var list = currentPlugins(); var p = list[state.selectedPlugin];
-        if (p && p.remove_cmd){ copyCatalogCommand(p.remove_cmd); }
-        else if (p){ toast('لا يوجد أمر إزالة مسجل لهذا العنصر'); }
+        if (p && p.installed){ p.installed = false; toast('تمت إزالة ' + p.name); renderPlugins(); }
+        else if (p){ toast(p.name + ' غير مثبت حاليًا'); }
       }
     });
   });
@@ -809,7 +920,6 @@
   /* ---------- Init ---------- */
   renderNav();
   renderCenter();
-  loadCommandData();
 })();
 </script>
 </body>
