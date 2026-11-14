@@ -1300,6 +1300,18 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/zoom/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Zoom",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Zoom'"
+    },
+    {
+      "name": "ArabicSavior (مصَحح اللغة العربية — مصدر إضافي)",
+      "cmd": "wget \"https://dreambox4u.com/emilnabil237/plugins/ArabicSavior/installer.sh\" -O - | /bin/sh"
+    },
+    {
+      "name": "CCcamInfo Py3 (بيانات الإضافة)",
+      "cmd": "wget \"https://github.com/emilnabil/download-plugins/raw/refs/heads/main/cccaminfo/cccaminfo_py3.sh\" -O - | /bin/sh"
+    },
+    {
+      "name": "KeyAdder (إضافة مفاتيح)",
+      "cmd": "wget \"https://dreambox4u.com/emilnabil237/KeyAdder/installer.sh\" -O - | /bin/sh"
     }
   ],
   "novaler": [
@@ -3445,6 +3457,10 @@
       "name": "Restore-sittings-xtraevent",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/restore-sittings-xtraevent.sh -O - | /bin/sh",
       "path": "/etc/enigma2/backup/backup"
+    },
+    {
+      "name": "Restore Settings (استعادة الإعدادات)",
+      "cmd": "wget \"https://github.com/emilnabil/backup-images/raw/refs/heads/main/backup-egami/restore-settings.sh\" -O - | /bin/sh"
     }
   ],
   "skins": [
@@ -3654,6 +3670,10 @@
       "cmd": "wget https://raw.githubusercontent.com/Insprion80/Skins/main/xDreamy/installer.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/xDreamy",
       "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
+    },
+    {
+      "name": "AglareATV Skin",
+      "cmd": "wget \"https://raw.githubusercontent.com/popking159/skins/refs/heads/main/aglareatv/installer.sh\" -O - | /bin/sh"
     }
   ],
   "teamnitro_skins": [
@@ -4656,6 +4676,10 @@
       "name": "Chocholousek Picons",
       "cmd": "wget https://github.com/s3n0/e2plugins/raw/master/ChocholousekPicons/online-setup -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ChocholousekPicons"
+    },
+    {
+      "name": "PiconMaker (إنشاء البيكونات)",
+      "cmd": "wget \"https://dreambox4u.com/emilnabil237/plugins/PiconMaker/PiconMaker.sh\" -O - | /bin/sh"
     }
   ],
   "remove": [
