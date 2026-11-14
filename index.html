@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>Enigma Panel — بانل انيجما٢</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e1c;
+    --bg2:#0d1226;
+    --surface:#131830;
+    --surface2:#171e3a;
+    --surface3:#1c2447;
+    --line:#232b4d;
+    --line2:#2c3660;
+    --gold:#e9b949;
+    --gold2:#c9962e;
+    --gold-soft:rgba(233,185,73,.14);
+    --text:#eef1fa;
+    --muted:#98a1c0;
+    --muted2:#6d7699;
+    --green:#37c978;
+    --red:#f0524f;
+    --yellow:#f5c542;
+    --blue:#4f8ef7;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(60,72,140,.28), transparent 60%),
+      radial-gradient(700px 420px at 5% 110%, rgba(233,185,73,.06), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:"Tajawal","Cairo",system-ui,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,[role="button"],input,select{font-family:inherit}
+  button{min-height:40px;cursor:pointer}
+  ::selection{background:var(--gold);color:#14100a}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:14px 22px 10px;
+    max-width:1460px;margin:0 auto;
+  }
+  .brand{text-align:right}
+  .brand .name{
+    font-family:"Cairo",sans-serif;font-weight:900;font-size:30px;line-height:1;
+    color:var(--gold);letter-spacing:.2px;direction:ltr;
+  }
+  .brand .sub{color:var(--muted);font-size:13.5px;margin-top:5px;font-weight:500}
+  .brand .sub b{color:var(--text);font-weight:700}
+  .clockbox{text-align:left;margin-inline-start:auto}
+  .clock{
+    font-family:"Cairo",sans-serif;font-weight:800;font-size:32px;line-height:1;
+    background:var(--surface);border:1px solid var(--line);
+    padding:7px 14px;border-radius:10px;display:inline-block;direction:ltr;
+    font-variant-numeric:tabular-nums;
+  }
+  .date{color:var(--muted);font-size:13.5px;margin-top:7px;font-weight:500}
+  .netstat{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;margin-top:4px}
+  .netstat .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(55,201,120,.8)}
+  .top-actions{display:flex;gap:10px;align-items:center}
+  .icon-btn{
+    width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+    background:var(--surface);color:var(--text);display:grid;place-items:center;
+    transition:border-color .15s, background .15s;
+  }
+  .icon-btn:hover{border-color:var(--gold);background:var(--surface2)}
+  .icon-btn svg{width:21px;height:21px}
+  .search-wrap{
+    display:flex;align-items:center;gap:10px;background:var(--surface);
+    border:1px solid var(--line);border-radius:999px;padding:0 18px;height:48px;
+    min-width:min(430px,100%);flex:1;max-width:520px;
+  }
+  .search-wrap:focus-within{border-color:var(--gold)}
+  .search-wrap svg{width:19px;height:19px;color:var(--muted);flex:none}
+  .search-wrap input{
+    background:none;border:none;outline:none;color:var(--text);
+    font-size:15.5px;width:100%;height:100%;
+  }
+  .search-wrap input::placeholder{color:var(--muted)}
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1460px;margin:0 auto;padding:8px 22px 96px;
+    display:grid;grid-template-columns:250px 1fr 300px;gap:16px;align-items:start;
+  }
+  .panel{
+    background:linear-gradient(180deg,var(--surface2),var(--surface));
+    border:1px solid var(--line);border-radius:var(--radius);
+  }
+  .panel h3{
+    margin:0;padding:13px 18px 9px;color:var(--muted);font-size:13px;font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  /* Right nav */
+  .nav-list{list-style:none;margin:0;padding:0 10px 12px;display:flex;flex-direction:column;gap:4px}
+  .nav-list button{
+    width:100%;display:flex;align-items:center;gap:11px;text-align:right;
+    background:none;border:1px solid transparent;border-radius:10px;color:var(--text);
+    font-size:17px;font-weight:700;padding:9px 12px;min-height:46px;
+    transition:background .15s,border-color .15s;
+  }
+  .nav-list button svg{width:21px;height:21px;color:var(--muted);flex:none}
+  .nav-list button:hover{background:var(--surface3)}
+  .nav-list button.active{
+    background:var(--surface3);border-color:var(--line2);color:var(--gold);
+    box-shadow:inset -3px 0 0 var(--gold);
+  }
+  .nav-list button.active svg{color:var(--gold)}
+
+  /* Center head */
+  .center-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:2px 4px 12px;flex-wrap:wrap}
+  .center-head h1{font-family:"Cairo",sans-serif;font-size:27px;font-weight:800;margin:0}
+  .center-head .count{color:var(--muted);font-size:14.5px;font-weight:500}
+  .view-toggle{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+  .view-toggle button{
+    border:none;background:none;color:var(--muted);border-radius:8px;
+    padding:6px 16px;font-size:14.5px;font-weight:700;min-height:36px;
+    display:flex;align-items:center;gap:7px;
+  }
+  .view-toggle button svg{width:16px;height:16px}
+  .view-toggle button.active{background:var(--gold);color:#171106}
+
+  /* List view */
+  .item-list{display:flex;flex-direction:column;gap:9px}
+  .row-item{
+    display:flex;align-items:center;gap:15px;width:100%;text-align:right;
+    background:linear-gradient(180deg,var(--surface2),var(--surface));
+    border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--text);
+    transition:border-color .15s, transform .15s;min-height:64px;
+  }
+  .row-item:hover{border-color:var(--line2)}
+  .row-item.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold), 0 6px 22px rgba(0,0,0,.35)}
+  .row-item .thumb{
+    width:46px;height:46px;border-radius:10px;flex:none;display:grid;place-items:center;
+    background:#0d1122;border:1px solid var(--line2);
+  }
+  .row-item .thumb svg{width:26px;height:26px}
+  .row-item .tt{flex:1;min-width:0}
+  .row-item .tt .t1{font-size:18.5px;font-weight:800;font-family:"Cairo",sans-serif}
+  .row-item.selected .tt .t1{color:var(--gold)}
+  .row-item .tt .t2{color:var(--muted);font-size:14px;margin-top:2px}
+  .row-item .go{color:var(--muted2);flex:none;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}
+  .row-item.selected .go{color:var(--gold)}
+
+  /* Grid view */
+  .grid-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+  .tile{
+    background:linear-gradient(180deg,var(--surface2),var(--surface));
+    border:1px solid var(--line);border-radius:14px;padding:20px 16px 16px;color:var(--text);
+    display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;
+    min-height:158px;transition:border-color .15s, transform .15s;
+  }
+  .tile:hover{border-color:var(--line2);transform:translateY(-2px)}
+  .tile.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+  .tile .thumb{width:58px;height:58px;border-radius:12px;display:grid;place-items:center;background:#0d1122;border:1px solid var(--line2)}
+  .tile .thumb svg{width:34px;height:34px}
+  .tile .t1{font-size:19px;font-weight:800;font-family:"Cairo",sans-serif}
+  .tile.selected .t1{color:var(--gold)}
+  .tile .t2{color:var(--muted);font-size:13.5px;line-height:1.55}
+
+  /* System panel */
+  .sys-body{padding:2px 18px 16px;display:flex;flex-direction:column;gap:9px;font-size:15px}
+  .sys-body .line{display:flex;justify-content:space-between;gap:10px}
+  .sys-body .k{color:var(--muted)}
+  .sys-body .v{font-weight:700;direction:ltr;text-align:left;font-variant-numeric:tabular-nums}
+  .sys-body .v.ar{direction:rtl;text-align:right}
+  .sys-body .online{color:var(--green)}
+  .bar{height:8px;border-radius:99px;background:#0b0f20;border:1px solid var(--line);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+  .bar.green i{background:linear-gradient(90deg,#1f9d5c,var(--green))}
+  .speeds{border-top:1px dashed var(--line2);padding-top:11px;margin-top:3px;display:flex;flex-direction:column;gap:7px}
+  .speeds .v{color:var(--gold)}
+
+  /* ---------- Plugins browser ---------- */
+  .layout.browser{grid-template-columns:262px 1fr 302px}
+  .cat-list{list-style:none;margin:0;padding:0 10px 10px;display:flex;flex-direction:column;gap:2px}
+  .cat-list button{
+    width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;
+    color:var(--text);font-size:16.5px;font-weight:700;padding:8px 10px;border-radius:9px;
+    text-align:right;min-height:44px;transition:background .15s;
+  }
+  .cat-list button:hover{background:var(--surface3)}
+  .cat-list button.active{color:var(--gold);box-shadow:inset -3px 0 0 var(--gold);background:var(--surface3)}
+  .cat-list .cnt{
+    margin-inline-start:auto;background:#0d1122;border:1px solid var(--line2);color:var(--muted);
+    font-size:12.5px;font-weight:800;min-width:30px;height:24px;border-radius:7px;
+    display:grid;place-items:center;padding:0 6px;font-variant-numeric:tabular-nums;
+  }
+  .cat-list button.active .cnt{background:var(--gold);color:#171106;border-color:var(--gold)}
+  .cat-foot{padding:8px 18px 14px;color:var(--muted2);font-size:13px;border-top:1px solid var(--line);direction:ltr;text-align:right}
+
+  .plug-list{display:flex;flex-direction:column;gap:9px}
+  .plug-row{
+    display:flex;align-items:center;gap:13px;width:100%;text-align:right;
+    background:linear-gradient(180deg,var(--surface2),var(--surface));
+    border:1px solid var(--line);border-radius:12px;padding:10px 15px;color:var(--text);
+    min-height:58px;transition:border-color .15s;
+  }
+  .plug-row:hover{border-color:var(--line2)}
+  .plug-row.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+  .plug-row .thumb{width:42px;height:42px;border-radius:9px;flex:none;display:grid;place-items:center;background:#0d1122;border:1px solid var(--line2);position:relative}
+  .plug-row .thumb svg{width:24px;height:24px}
+  .plug-row .thumb .x{
+    position:absolute;top:-7px;inset-inline-start:-7px;width:17px;height:17px;border-radius:50%;
+    background:var(--red);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;line-height:1;
+  }
+  .plug-row .nm{flex:1;font-size:17.5px;font-weight:700;direction:ltr;text-align:right;font-family:"Cairo",sans-serif;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .plug-row.selected .nm{color:var(--gold)}
+  .plug-row .ver{color:var(--muted);font-size:14.5px;direction:ltr;font-variant-numeric:tabular-nums;flex:none}
+  .badge{
+    flex:none;font-size:12.5px;font-weight:800;border-radius:7px;padding:4px 11px;min-height:26px;
+    display:inline-flex;align-items:center;
+  }
+  .badge.installed{background:rgba(240,82,79,.16);color:#ff8a86;border:1px solid rgba(240,82,79,.35)}
+  .badge.free{background:var(--surface3);color:var(--muted);border:1px solid var(--line2)}
+  .empty{
+    border:1px dashed var(--line2);border-radius:12px;padding:34px 18px;text-align:center;
+    color:var(--muted);font-size:15.5px;background:var(--surface);
+  }
+
+  /* Detail card */
+  .detail{padding:20px 18px 18px;text-align:center}
+  .detail .big-thumb{
+    width:96px;height:96px;margin:2px auto 12px;border-radius:18px;position:relative;
+    background:#0d1122;border:1px solid var(--line2);display:grid;place-items:center;
+  }
+  .detail .big-thumb svg{width:54px;height:54px}
+  .detail .big-thumb .x{
+    position:absolute;top:-9px;inset-inline-start:-9px;width:24px;height:24px;border-radius:50%;
+    background:var(--red);color:#fff;font-size:15px;font-weight:900;display:grid;place-items:center;
+  }
+  .detail h2{font-family:"Cairo",sans-serif;font-size:24px;font-weight:800;color:var(--gold);margin:0;direction:ltr}
+  .detail .ver{color:var(--muted);margin-top:3px;font-size:14.5px;direction:ltr}
+  .detail .meta{margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;text-align:right;font-size:15px}
+  .detail .meta .line{display:flex;justify-content:space-between;gap:10px}
+  .detail .meta .k{color:var(--muted)}
+  .detail .meta .v{font-weight:700}
+  .detail .meta .v.inst{color:#ff8a86}
+  .detail .meta .v.notinst{color:var(--green)}
+  .detail .desc{color:var(--muted);font-size:14.5px;line-height:1.8;margin:12px 0 16px;text-align:right}
+  .detail .act{display:flex;gap:9px}
+  .btn{
+    flex:1;border-radius:11px;border:1px solid var(--line2);background:var(--surface3);
+    color:var(--text);font-size:15.5px;font-weight:800;padding:10px 12px;min-height:46px;
+    transition:filter .15s, background .15s;
+  }
+  .btn:hover{filter:brightness(1.15)}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:#171106}
+  .btn.danger{background:rgba(240,82,79,.15);border-color:rgba(240,82,79,.4);color:#ff8a86}
+
+  /* About */
+  .about-body{padding:6px 20px 20px;font-size:15.5px;line-height:1.9;color:var(--muted)}
+  .about-body b{color:var(--text)}
+  .about-body .row{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:8px 0}
+  .about-body .row:last-child{border-bottom:none}
+
+  /* ---------- Bottom remote bar ---------- */
+  .remote{
+    position:sticky;bottom:0;z-index:20;
+    background:rgba(13,17,34,.92);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+  }
+  .remote-in{
+    max-width:1460px;margin:0 auto;padding:11px 22px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .rbtn{
+    display:inline-flex;align-items:center;gap:9px;background:none;border:none;color:var(--text);
+    font-size:15.5px;font-weight:700;padding:8px 12px;border-radius:9px;min-height:42px;
+  }
+  .rbtn:hover{background:var(--surface3)}
+  .rbtn .dot{width:15px;height:15px;border-radius:50%;flex:none}
+  .dot.red{background:var(--red)} .dot.green{background:var(--green)}
+  .dot.yellow{background:var(--yellow)} .dot.blue{background:var(--blue)}
+  .rbtn.gold-txt{color:var(--gold)}
+  .remote .spacer{flex:1}
+  .ok-hint{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14.5px;font-weight:600}
+  .kbd{
+    border:1px solid var(--line2);background:var(--surface3);border-radius:6px;
+    padding:2px 9px;font-size:12.5px;color:var(--text);font-weight:800;direction:ltr;
+  }
+  .toast{
+    position:fixed;bottom:86px;inset-inline-start:50%;transform:translateX(50%) translateY(16px);
+    background:var(--surface3);border:1px solid var(--gold);color:var(--text);
+    padding:11px 20px;border-radius:12px;font-size:15px;font-weight:700;opacity:0;pointer-events:none;
+    transition:opacity .25s, transform .25s;z-index:50;box-shadow:0 14px 40px rgba(0,0,0,.5);
+    max-width:calc(100vw - 32px);text-align:center;
+  }
+  [dir="rtl"] .toast{transform:translateX(50%) translateY(16px)}
+  .toast.show{opacity:1;transform:translateX(50%) translateY(0)}
+
+  .compat{
+    max-width:1460px;margin:0 auto;padding:0 22px 4px;
+    display:flex;gap:9px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13.5px;font-weight:600;
+  }
+  .compat .chip{
+    border:1px solid var(--line);background:var(--surface);border-radius:999px;
+    padding:5px 13px;color:var(--text);font-weight:700;font-size:13px;
+  }
+
+  @media (max-width:1080px){
+    .layout,.layout.browser{grid-template-columns:210px 1fr}
+    .sys-col{grid-column:1 / -1}
+    .detail-col{grid-column:1 / -1}
+  }
+  @media (max-width:720px){
+    .remote{position:static}
+    .layout,.layout.browser{grid-template-columns:1fr;padding:8px 14px 20px}
+    .topbar{padding:12px 14px 8px}
+    .brand .name{font-size:25px}
+    .clock{font-size:26px}
+    .nav-list{flex-direction:row;flex-wrap:wrap;padding:0 10px 10px}
+    .nav-list li{flex:1 1 40%}
+    .nav-list button{justify-content:center;font-size:15.5px}
+    .nav-list button.active{box-shadow:inset 0 -3px 0 var(--gold)}
+    .cat-list{flex-direction:row;flex-wrap:wrap}
+    .cat-list li{flex:1 1 42%}
+    .cat-list button{font-size:15px}
+    .cat-list button.active{box-shadow:inset 0 -3px 0 var(--gold)}
+    .grid-view{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+    .remote-in{padding:9px 12px;justify-content:center}
+    .remote .spacer{display:none}
+    .search-wrap{order:5;max-width:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="name">Enigma Panel</div>
+    <div class="sub">بانل انيجما٢ &nbsp;|&nbsp; الإصدار <b>1.0</b></div>
+  </div>
+
+  <div class="search-wrap" id="searchWrap" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+    <input id="searchInput" type="search" placeholder="ابحث عن البلاجينات والإضافات" aria-label="بحث عن البلاجينات والإضافات" />
+  </div>
+
+  <div class="top-actions" id="topActions">
+    <button class="icon-btn" id="cartBtn" aria-label="سلة التنزيلات" title="سلة التنزيلات">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.6"/><circle cx="19" cy="21" r="1.6"/><path d="M2.5 3h2l2.6 12.4a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L21.5 7H6"/></svg>
+    </button>
+    <button class="icon-btn" id="bellBtn" aria-label="الإشعارات" title="الإشعارات">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    </button>
+  </div>
+
+  <div class="clockbox">
+    <div class="clock" id="clock">14:58</div>
+    <div class="date" id="dateLine">السبت 24 أكتوبر</div>
+    <div class="netstat"><span class="dot"></span><span>الشبكة متصلة</span></div>
+  </div>
+</header>
+
+<div class="compat">
+  <span>متوافق مع أجهزة:</span>
+  <span class="chip">Dreambox</span>
+  <span class="chip">Vu+</span>
+  <span class="chip">Enigma2</span>
+</div>
+
+<!-- ============ HOME LAYOUT ============ -->
+<main class="layout" id="homeLayout">
+  <!-- Sections nav (right in RTL) -->
+  <nav class="panel" aria-label="الأقسام">
+    <h3>الأقسام</h3>
+    <ul class="nav-list" id="navList"></ul>
+  </nav>
+
+  <!-- Center -->
+  <section>
+    <div class="center-head">
+      <div>
+        <h1 id="sectionTitle">انجما٢</h1>
+        <div class="count" id="sectionCount"></div>
+      </div>
+      <div class="view-toggle" role="group" aria-label="طريقة العرض">
+        <button id="listModeBtn" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg>
+          قائمة
+        </button>
+        <button id="gridModeBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+          شبكة
+        </button>
+      </div>
+    </div>
+    <div id="centerContent"></div>
+  </section>
+
+  <!-- System info (left in RTL) -->
+  <aside class="panel sys-col" aria-label="معلومات النظام">
+    <h3>النظام</h3>
+    <div class="sys-body">
+      <div class="line"><span class="k">الصورة</span><span class="v">EGAMI-Team</span></div>
+      <div class="line"><span class="k">بايثون</span><span class="v">Python: 3.13.12</span></div>
+      <div class="line"><span class="k">الآي بي</span><span class="v">IP: 192.168.0.10</span></div>
+      <div class="line"><span class="k">الشبكة</span><span class="v online">Online</span></div>
+      <div class="line"><span class="k">القرص</span><span class="v">Hdd: 46.7GB / 219.1GB</span></div>
+      <div class="bar"><i id="hddBar" style="width:21%"></i></div>
+      <div class="line"><span class="k">الذاكرة</span><span class="v">Ram: 830MB / 1003MB</span></div>
+      <div class="bar green"><i id="ramBar" style="width:83%"></i></div>
+      <div class="speeds">
+        <div class="line"><span class="k">التنزيل</span><span class="v" id="dlSpeed">5.9 Mbps</span></div>
+        <div class="line"><span class="k">الرفع</span><span class="v" id="ulSpeed">2.7 Mbps</span></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ============ PLUGINS BROWSER ============ -->
+<main class="layout browser" id="browserLayout" hidden>
+  <!-- Categories -->
+  <nav class="panel" aria-label="الفئات">
+    <h3>الفئات</h3>
+    <ul class="cat-list" id="catList"></ul>
+    <div class="cat-foot" id="catFoot">1 / 11</div>
+  </nav>
+
+  <!-- Plugin list -->
+  <section>
+    <div class="center-head">
+      <div>
+        <h1 id="catTitle">الصوتيات</h1>
+        <div class="count" id="catCount"></div>
+      </div>
+      <button class="btn" id="backBtn" style="flex:none;padding:8px 18px">رجوع للأقسام</button>
+    </div>
+    <div class="plug-list" id="plugList"></div>
+  </section>
+
+  <!-- Detail -->
+  <aside class="panel detail-col" aria-label="تفاصيل الإضافة">
+    <div class="detail" id="detailCard"></div>
+  </aside>
+</main>
+
+<!-- ============ REMOTE BAR ============ -->
+<footer class="remote">
+  <div class="remote-in" id="remoteHome">
+    <button class="rbtn" data-act="hide"><span class="dot red"></span>إخفاء / إظهار</button>
+    <button class="rbtn" data-act="network"><span class="dot green"></span>شبكة</button>
+    <button class="rbtn" data-act="speed"><span class="dot yellow"></span>اختبار السرعة</button>
+    <button class="rbtn" data-act="move"><span class="dot blue"></span>نقل</button>
+    <span class="spacer"></span>
+    <span class="ok-hint"><span class="kbd">OK</span> اختيار</span>
+    <button class="rbtn gold-txt" data-act="recent">حديث | متعدد</button>
+  </div>
+  <div class="remote-in" id="remoteBrowser" hidden>
+    <button class="rbtn" data-act="remove"><span class="dot red"></span>حذف</button>
+    <span class="spacer"></span>
+    <span class="ok-hint"><span class="kbd">OK</span> اختيار</span>
+    <span class="ok-hint">الفئات <span class="kbd">&lt;</span></span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Icons (inline SVG, stroke style) ---------- */
+  function ic(paths, color){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(color||'#e9b949')+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+  }
+  var ICONS = {
+    plugins: ic('<path d="M10 3v3H7a2 2 0 0 1 0 4h3v4a3 3 0 1 0 4 0v-4h4a2 2 0 0 0 0-4h-3V3" transform="rotate(90 12 12)"/><circle cx="12" cy="12" r="9.2" stroke-opacity=".45"/>'),
+    feed: ic('<path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.6" fill="#e9b949"/>'),
+    safe: ic('<path d="M12 3l7 3v5c0 4.6-3 8.1-7 10-4-1.9-7-5.4-7-10V6z"/><path d="m9 12 2 2 4-4"/>'),
+    softcam: ic('<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/>'),
+    picon: ic('<rect x="3" y="4" width="18" height="13" rx="2"/><path d="m3 14 5-4 4 3 3-2 6 4"/><circle cx="9" cy="8.5" r="1.4"/>'),
+    skin: ic('<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/>'),
+    panel: ic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m9 9-2.5 3L9 15M13 15h5"/>'),
+    display: ic('<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>'),
+    multiboot: ic('<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path d="M7 7h.01M7 17h.01"/>'),
+    novaler: ic('<circle cx="12" cy="12" r="9"/><path d="M8 16V8l8 8V8"/>'),
+    settings: ic('<circle cx="12" cy="12" r="3.2"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/>'),
+    tools: ic('<path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3z"/>'),
+    tv: ic('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="m8 2.5 4 3.5 4-3.5"/>'),
+    grid: ic('<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>'),
+    info: ic('<circle cx="12" cy="12" r="9.2"/><path d="M12 11v5"/><circle cx="12" cy="8" r="1.2" fill="#e9b949"/>'),
+    link: ic('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>'),
+    backup: ic('<path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/>'),
+    book: ic('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/>'),
+    lock: ic('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+    gift: ic('<rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13M12 8s-4.5.2-4.5-2.3C7.5 3.6 12 3.8 12 8ZM12 8s4.5.2 4.5-2.3C16.5 3.6 12 3.8 12 8Z"/>'),
+    game: ic('<path d="M6 9h12a4 4 0 0 1 4 4.6C22 16 20.6 17 19 17c-1 0-1.8-.5-2.4-1.2L15.5 14h-7l-1.1 1.8C6.8 16.5 6 17 5 17c-1.6 0-3-1-3-3.4A4 4 0 0 1 6 9Z"/><path d="M7.5 11v4M5.5 13h4"/><circle cx="16.5" cy="12" r=".9" fill="#e9b949"/><circle cx="18.5" cy="14" r=".9" fill="#e9b949"/>'),
+    iptv: ic('<rect x="3" y="5" width="18" height="12" rx="2"/><path d="m10.5 9.2 4.5 1.8-4.5 1.8z" fill="#e9b949" stroke="none"/><path d="M8 20.5h8"/>'),
+    quran: ic('<path d="M12 4c-1.8-1.2-4-1.6-7-1.6v15c3 0 5.2.4 7 1.6 1.8-1.2 4-1.6 7-1.6v-15c-3 0-5.2.4-7 1.6Z"/><path d="M12 4v15"/>'),
+    sport: ic('<circle cx="12" cy="12" r="9.2"/><path d="M12 7l2.6 1.9-1 3h-3.2l-1-3zM12 2.8v4.2M21 9.5l-3.9.4M17.8 19.4l-2.2-3.2M6.2 19.4l2.2-3.2M3 9.5l3.9.4"/>'),
+    music: ic('<path d="M9 18V6l10-2v11"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/>'),
+    clean: ic('<path d="M4 7h16M9 7V4h6v3M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7A1.5 1.5 0 0 0 17 20l1-13"/>'),
+    globe: ic('<circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.7 2.6 4 5.7 4 9.2s-1.3 6.6-4 9.2c-2.7-2.6-4-5.7-4-9.2s1.3-6.6 4-9.2Z"/>'),
+    restart: ic('<path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 3v4h-4"/>'),
+    sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>')
+  };
+
+  /* ---------- Data (built from the reference screenshots only) ---------- */
+  var SECTIONS = [
+    { id:'enigma',   name:'انجما٢',        icon:'tv' },
+    { id:'system',   name:'خدمات النظام',  icon:'settings' },
+    { id:'general',  name:'خدمات عامة',    icon:'grid' },
+    { id:'settings', name:'الإعدادات',     icon:'tools' },
+    { id:'about',    name:'حول',           icon:'info' }
+  ];
+
+  var ITEMS = {
+    enigma: [
+      { id:'plugins',  name:'الإضافات',     desc:'إدارة وتثبيت البلاجينات',                    icon:'link',    open:true },
+      { id:'feeds',    name:'الفيدات',      desc:'تحديث وتثبيت الفيدات',                      icon:'feed' },
+      { id:'safe',     name:'اضافات سييف',  desc:'إدارة وتثبيت البلاجينات',                   icon:'safe' },
+      { id:'softcam',  name:'السوفتكامات',  desc:'إدارة السوفتكامات',                         icon:'softcam' },
+      { id:'picons',   name:'البيكونات',    desc:'تثبيت وإدارة شعارات القنوات',               icon:'picon' },
+      { id:'skins',    name:'السكينات',     desc:'اختيار وتطبيق السكينات',                    icon:'skin' },
+      { id:'panels',   name:'البانلات',     desc:'استكشف بانلات انجما٢ مع روابط المطورين',    icon:'panel' },
+      { id:'display',  name:'العرض',        desc:'تغيير شعارات الإقلاع وأيقونات التحميل',     icon:'display' },
+      { id:'multiboot',name:'ملتي بوت',     desc:'تثبيت وإدارة بلاجينات الملتي بوت ومثبتات الصور', icon:'multiboot' },
+      { id:'novaler',  name:'نوفالر',       desc:'بلاجينات وأدوات لأجهزة نوفالر',             icon:'novaler' },
+      { id:'chsettings',name:'الإعدادات',   desc:'جرب قنوات وترددات جديدة',                   icon:'settings' },
+      { id:'tools',    name:'الأدوات',      desc:'أدوات وإضافات مفيدة',                       icon:'tools' }
+    ],
+    system: [
+      { id:'clean',   name:'تنظيف النظام',   desc:'تنظيف الذاكرة والملفات المؤقتة',  icon:'clean' },
+      { id:'storage', name:'إدارة التخزين',  desc:'فحص القرص الصلب واليو إس بي',     icon:'multiboot' },
+      { id:'backup',  name:'النسخ الاحتياطي',desc:'نسخة احتياطية كاملة من الصورة',   icon:'backup' },
+      { id:'restart', name:'إعادة التشغيل',  desc:'إعادة تشغيل الواجهة أو الجهاز',   icon:'restart' },
+      { id:'net',     name:'خدمات الشبكة',   desc:'إدارة الشبكة والاتصال',           icon:'globe' }
+    ],
+    general: [
+      { id:'weather', name:'الطقس',      desc:'حالة الطقس لمدينتك',        icon:'sun' },
+      { id:'news',    name:'الأخبار',    desc:'آخر الأخبار والعناوين',      icon:'feed' },
+      { id:'web',     name:'التصفح',     desc:'خدمات الويب العامة',         icon:'globe' },
+      { id:'radio',   name:'الراديو',    desc:'محطات راديو عبر الإنترنت',   icon:'music' }
+    ],
+    settings: [
+      { id:'netset',  name:'إعدادات الشبكة', desc:'ضبط الاتصال السلكي واللاسلكي', icon:'globe' },
+      { id:'picset',  name:'إعدادات الصورة', desc:'الدقة ونسبة العرض',            icon:'display' },
+      { id:'audset',  name:'إعدادات الصوت',  desc:'مستوى الصوت والمخرجات',        icon:'music' },
+      { id:'langset', name:'اللغة',          desc:'لغة الواجهة والترجمة',         icon:'book' }
+    ]
+  };
+
+  var CATEGORIES = [
+    { id:'audio',   name:'الصوتيات',        count:15, icon:'music' },
+    { id:'backup',  name:'النسخ الاحتياطي', count:3,  icon:'backup' },
+    { id:'epg',     name:'دليل البرامج',    count:11, icon:'book' },
+    { id:'crypt',   name:'التشفير',         count:20, icon:'lock' },
+    { id:'free',    name:'مجاني',           count:16, icon:'gift' },
+    { id:'games',   name:'الألعاب',         count:10, icon:'game' },
+    { id:'iptv',    name:'أي بي تي في',     count:36, icon:'iptv' },
+    { id:'quran',   name:'القرآن',          count:12, icon:'quran' },
+    { id:'picons',  name:'البيكونات',       count:8,  icon:'picon' },
+    { id:'config',  name:'الإعدادات',       count:4,  icon:'settings' },
+    { id:'sport',   name:'الرياضة',         count:5,  icon:'sport' }
+  ];
+
+  var PLUGINS = {
+    audio: [
+      { name:'Alkuds',                ver:'r214',     installed:true,  desc:'الصوتيات القدس اي بي اوديو' },
+      { name:'Audiomerge',            ver:'4.0',      installed:false, desc:'دمج ومزامنة المسارات الصوتية' },
+      { name:'AudioShift',            ver:'1.2.4.r4', installed:false, desc:'ضبط تأخير الصوت ومزامنته مع الصورة' },
+      { name:'AudioSelectionPatcher', ver:'1.3',      installed:true,  desc:'تحسين قائمة اختيار المسارات الصوتية' },
+      { name:'Ipaudio (3)',           ver:'',         installed:false, desc:'تشغيل الصوتيات عبر أي بي' },
+      { name:'Ipaudiopro (2)',        ver:'',         installed:false, desc:'نسخة احترافية من مشغل الصوتيات' },
+      { name:'Ipaudioplus',           ver:'2.6.0',    installed:false, desc:'مشغل صوتيات موسع بمزايا إضافية' },
+      { name:'Ipstreamer',            ver:'1.3',      installed:false, desc:'بث الصوت عبر الشبكة المحلية' }
+    ],
+    iptv: [
+      { name:'E2iPlayer',   ver:'',      installed:false, desc:'مشغل محتوى وخدمات عبر الإنترنت' },
+      { name:'XStreamity',  ver:'4.x',   installed:false, desc:'تشغيل قوائم أي بي تي في بواجهة مرتبة' },
+      { name:'Jedi Maker',  ver:'',      installed:false, desc:'إنشاء باقات من قوائم التشغيل' },
+      { name:'IPTV Player', ver:'1.0',   installed:false, desc:'مشغل قوائم التشغيل المباشر' }
+    ],
+    backup: [
+      { name:'BackupSuite', ver:'', installed:false, desc:'نسخ احتياطي كامل للصورة والإعدادات' },
+      { name:'AutoBackup',  ver:'', installed:false, desc:'نسخ احتياطي تلقائي مجدول' }
+    ],
+    epg: [
+      { name:'EPGImport',     ver:'', installed:false, desc:'استيراد دليل البرامج الإلكتروني' },
+      { name:'CrossEPG',      ver:'', installed:false, desc:'تحميل دليل البرامج من مصادر متعددة' },
+      { name:'EPG Translator',ver:'', installed:false, desc:'ترجمة عناوين دليل البرامج' }
+    ],
+    crypt: [
+      { name:'Softcam Manager', ver:'', installed:false, desc:'إدارة وتشغيل السوفتكامات' },
+      { name:'Key Updater',     ver:'', installed:false, desc:'تحديث ملفات المفاتيح' }
+    ],
+    free: [
+      { name:'YouTube',   ver:'', installed:false, desc:'مشاهدة يوتيوب على الرسيفر' },
+      { name:'Weather',   ver:'', installed:false, desc:'حالة الطقس على الشاشة' },
+      { name:'MediaPortal', ver:'', installed:false, desc:'بوابة وسائط متعددة' }
+    ],
+    games: [
+      { name:'Games Pack', ver:'', installed:false, desc:'حزمة ألعاب خفيفة للرسيفر' }
+    ],
+    quran: [
+      { name:'Quran Player', ver:'', installed:false, desc:'تلاوات ومصاحف صوتية' },
+      { name:'Azkar',        ver:'', installed:false, desc:'أذكار وأدعية يومية' }
+    ],
+    picons: [
+      { name:'Picon Manager', ver:'', installed:false, desc:'تحميل وتحديث شعارات القنوات' },
+      { name:'SNP Picons',    ver:'', installed:false, desc:'شعارات بأسماء الخدمات' }
+    ],
+    config: [
+      { name:'AJPanel',     ver:'', installed:false, desc:'إدارة الملفات والقنوات والإعدادات' },
+      { name:'DreamExplorer', ver:'', installed:false, desc:'تصفح ملفات الجهاز' }
+    ],
+    sport: [
+      { name:'Sport Portal', ver:'', installed:false, desc:'أخبار ونتائج رياضية' }
+    ]
+  };
+
+  /* ---------- State ---------- */
+  var state = {
+    section:'enigma',
+    viewMode:'list',
+    selectedItem:'plugins',
+    inBrowser:false,
+    category:'audio',
+    selectedPlugin:0,
+    query:''
+  };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var toastTimer = null;
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  }
+
+  /* ---------- Clock ---------- */
+  function tickClock(){
+    var now = new Date();
+    var hh = String(now.getHours()).padStart(2,'0');
+    var mm = String(now.getMinutes()).padStart(2,'0');
+    $('clock').textContent = hh + ':' + mm;
+    try{
+      $('dateLine').textContent = new Intl.DateTimeFormat('ar-EG',{weekday:'long', day:'numeric', month:'long'}).format(now);
+    }catch(e){ /* keep fallback text */ }
+  }
+  tickClock(); setInterval(tickClock, 15000);
+
+  /* ---------- Home: nav ---------- */
+  function renderNav(){
+    $('navList').innerHTML = SECTIONS.map(function(s){
+      return '<li><button data-sec="'+s.id+'" class="'+(state.section===s.id?'active':'')+'">'
+        + ICONS[s.icon] + '<span>'+s.name+'</span></button></li>';
+    }).join('');
+    var btns = $('navList').querySelectorAll('button');
+    for (var i=0;i<btns.length;i++){
+      btns[i].addEventListener('click', function(){
+        state.section = this.getAttribute('data-sec');
+        state.selectedItem = (ITEMS[state.section]||[])[0] ? ITEMS[state.section][0].id : null;
+        renderNav(); renderCenter();
+      });
+    }
+  }
+
+  /* ---------- Home: center ---------- */
+  function renderCenter(){
+    var titleMap = { enigma:'انجما٢', system:'خدمات النظام', general:'خدمات عامة', settings:'الإعدادات', about:'حول' };
+    $('sectionTitle').textContent = titleMap[state.section];
+    var box = $('centerContent');
+
+    if (state.section === 'about'){
+      $('sectionCount').textContent = 'معلومات البانل';
+      box.innerHTML = '<div class="panel"><div class="about-body">'
+        + '<div class="row"><span>اسم البانل</span><b>Enigma Panel</b></div>'
+        + '<div class="row"><span>الإصدار</span><b>1.0</b></div>'
+        + '<div class="row"><span>النظام</span><b>Enigma2</b></div>'
+        + '<div class="row"><span>الأجهزة المدعومة</span><b>Dreambox — Vu+</b></div>'
+        + '<p>بانل منظم لإدارة البلاجينات والسكينات على أجهزة انجما٢: أقسام واضحة للبلاجينات والفيدات والسوفتكامات والبيكونات، مع معلومات النظام وحالة الشبكة في نفس الشاشة.</p>'
+        + '</div></div>';
+      return;
+    }
+
+    var items = ITEMS[state.section] || [];
+    $('sectionCount').textContent = items.length + ' عنصر — صفحة 1/1';
+
+    if (state.viewMode === 'grid'){
+      box.innerHTML = '<div class="grid-view">' + items.map(function(it){
+        return '<button class="tile'+(state.selectedItem===it.id?' selected':'')+'" data-item="'+it.id+'">'
+          + '<span class="thumb">'+ICONS[it.icon]+'</span>'
+          + '<span class="t1">'+it.name+'</span>'
+          + '<span class="t2">'+it.desc+'</span></button>';
+      }).join('') + '</div>';
+    } else {
+      box.innerHTML = '<div class="item-list">' + items.map(function(it){
+        return '<button class="row-item'+(state.selectedItem===it.id?' selected':'')+'" data-item="'+it.id+'">'
+          + '<span class="thumb">'+ICONS[it.icon]+'</span>'
+          + '<span class="tt"><span class="t1">'+it.name+'</span><div class="t2">'+it.desc+'</div></span>'
+          + (it.open ? '<span class="go">فتح ‹</span>' : '')
+          + '</button>';
+      }).join('') + '</div>';
+    }
+
+    var els = box.querySelectorAll('[data-item]');
+    for (var i=0;i<els.length;i++){
+      els[i].addEventListener('click', function(){
+        var id = this.getAttribute('data-item');
+        state.selectedItem = id;
+        var item = items.filter(function(x){ return x.id===id; })[0];
+        if (item && item.open){ openBrowser(); return; }
+        renderCenter();
+      });
+    }
+  }
+
+  $('listModeBtn').addEventListener('click', function(){
+    state.viewMode='list'; this.classList.add('active'); $('gridModeBtn').classList.remove('active'); renderCenter();
+  });
+  $('gridModeBtn').addEventListener('click', function(){
+    state.viewMode='grid'; this.classList.add('active'); $('listModeBtn').classList.remove('active'); renderCenter();
+  });
+
+  /* ---------- Plugins browser ---------- */
+  function currentPlugins(){
+    var list = PLUGINS[state.category] || [];
+    if (!state.query) return list;
+    var q = state.query.toLowerCase();
+    return list.filter(function(p){ return p.name.toLowerCase().indexOf(q) > -1 || p.desc.indexOf(state.query) > -1; });
+  }
+  function catInfo(){
+    return CATEGORIES.filter(function(c){ return c.id===state.category; })[0];
+  }
+
+  function renderCats(){
+    $('catList').innerHTML = CATEGORIES.map(function(c){
+      return '<li><button data-cat="'+c.id+'" class="'+(state.category===c.id?'active':'')+'">'
+        + '<span>'+c.name+'</span><span class="cnt">'+c.count+'</span></button></li>';
+    }).join('');
+    var idx = CATEGORIES.findIndex(function(c){ return c.id===state.category; });
+    $('catFoot').textContent = (idx+1) + ' / ' + CATEGORIES.length;
+    var btns = $('catList').querySelectorAll('button');
+    for (var i=0;i<btns.length;i++){
+      btns[i].addEventListener('click', function(){
+        state.category = this.getAttribute('data-cat');
+        state.selectedPlugin = 0;
+        renderCats(); renderPlugins();
+      });
+    }
+  }
+
+  function renderPlugins(){
+    var list = currentPlugins();
+    var info = catInfo();
+    $('catTitle').textContent = info.name;
+    $('catCount').textContent = list.length + ' حزمة — صفحة 1/1' + (state.query ? ' — نتائج البحث' : '');
+    var box = $('plugList');
+    if (!list.length){
+      box.innerHTML = '<div class="empty">لا توجد إضافات مطابقة في هذه الفئة.</div>';
+      renderDetail(null);
+      return;
+    }
+    if (state.selectedPlugin >= list.length) state.selectedPlugin = 0;
+    box.innerHTML = list.map(function(p, i){
+      return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" data-idx="'+i+'">'
+        + '<span class="thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</span>'
+        + '<span class="nm">'+p.name+'</span>'
+        + (p.ver ? '<span class="ver">'+p.ver+'</span>' : '')
+        + (p.installed ? '<span class="badge installed">مثبت</span>' : '<span class="badge free">تثبيت</span>')
+        + '</button>';
+    }).join('');
+    var rows = box.querySelectorAll('[data-idx]');
+    for (var i=0;i<rows.length;i++){
+      rows[i].addEventListener('click', function(){
+        state.selectedPlugin = parseInt(this.getAttribute('data-idx'),10);
+        renderPlugins();
+      });
+    }
+    renderDetail(list[state.selectedPlugin]);
+  }
+
+  function renderDetail(p){
+    var box = $('detailCard');
+    var info = catInfo();
+    if (!p){
+      box.innerHTML = '<p style="color:var(--muted);margin:26px 0">اختر إضافة من القائمة لعرض تفاصيلها.</p>';
+      return;
+    }
+    box.innerHTML =
+      '<div class="big-thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</div>'
+      + '<h2>'+p.name+'</h2>'
+      + (p.ver ? '<div class="ver">الإصدار '+p.ver+'</div>' : '<div class="ver">إضافة انجما٢</div>')
+      + '<div class="meta">'
+      +   '<div class="line"><span class="k">الحالة</span><span class="v '+(p.installed?'inst':'notinst')+'">'+(p.installed?'مثبت':'غير مثبت')+'</span></div>'
+      +   '<div class="line"><span class="k">الفئة</span><span class="v">'+info.name+'</span></div>'
+      + '</div>'
+      + '<p class="desc">'+p.desc+'</p>'
+      + '<div class="act">'
+      + (p.installed
+          ? '<button class="btn danger" id="detailAct">إزالة</button>'
+          : '<button class="btn gold" id="detailAct">تثبيت</button>')
+      + '</div>';
+    $('detailAct').addEventListener('click', function(){
+      p.installed = !p.installed;
+      toast(p.installed ? ('تم تثبيت ' + p.name) : ('تمت إزالة ' + p.name));
+      renderPlugins();
+    });
+  }
+
+  function openBrowser(){
+    state.inBrowser = true;
+    $('homeLayout').hidden = true;
+    $('browserLayout').hidden = false;
+    $('remoteHome').hidden = true;
+    $('remoteBrowser').hidden = false;
+    $('searchWrap').hidden = false;
+    $('topActions').hidden = true;
+    renderCats(); renderPlugins();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function closeBrowser(){
+    state.inBrowser = false;
+    $('homeLayout').hidden = false;
+    $('browserLayout').hidden = true;
+    $('remoteHome').hidden = false;
+    $('remoteBrowser').hidden = true;
+    $('searchWrap').hidden = true;
+    $('topActions').hidden = false;
+    state.query=''; $('searchInput').value='';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  $('backBtn').addEventListener('click', closeBrowser);
+
+  $('searchInput').addEventListener('input', function(){
+    state.query = this.value.trim();
+    state.selectedPlugin = 0;
+    renderPlugins();
+  });
+
+  /* ---------- Remote bar actions ---------- */
+  var testing = false;
+  function speedTest(){
+    if (testing) return; testing = true;
+    toast('جارٍ اختبار سرعة الاتصال…');
+    var dl = $('dlSpeed'), ul = $('ulSpeed');
+    var steps = 0;
+    var iv = setInterval(function(){
+      steps++;
+      dl.textContent = (Math.random()*38+4).toFixed(1) + ' Mbps';
+      ul.textContent = (Math.random()*14+1).toFixed(1) + ' Mbps';
+      if (steps >= 9){
+        clearInterval(iv);
+        var fdl = (Math.random()*22+18).toFixed(1), ful = (Math.random()*6+5).toFixed(1);
+        dl.textContent = fdl + ' Mbps'; ul.textContent = ful + ' Mbps';
+        testing = false;
+        toast('اكتمل الاختبار — التنزيل ' + fdl + ' Mbps، الرفع ' + ful + ' Mbps');
+      }
+    }, 160);
+  }
+
+  document.querySelectorAll('.rbtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var act = this.getAttribute('data-act');
+      if (act === 'speed') speedTest();
+      else if (act === 'network') toast('الشبكة متصلة — IP: 192.168.0.10');
+      else if (act === 'hide') toast('تم إخفاء الواجهة — اضغط أي زر للإظهار');
+      else if (act === 'move') toast('وضع النقل: اختر عنصرًا ثم حدد مكانه الجديد');
+      else if (act === 'recent') toast('عرض أحدث الإضافات والمحتوى المتعدد');
+      else if (act === 'remove'){
+        var list = currentPlugins(); var p = list[state.selectedPlugin];
+        if (p && p.installed){ p.installed = false; toast('تمت إزالة ' + p.name); renderPlugins(); }
+        else if (p){ toast(p.name + ' غير مثبت حاليًا'); }
+      }
+    });
+  });
+
+  $('cartBtn').addEventListener('click', function(){ toast('سلة التنزيلات فارغة'); });
+  $('bellBtn').addEventListener('click', function(){ toast('لا توجد إشعارات جديدة'); });
+
+  /* ---------- Init ---------- */
+  renderNav();
+  renderCenter();
+})();
+</script>
+</body>
+</html>
