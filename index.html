@@ -270,6 +270,18 @@
   .detail .meta .v.notinst{color:var(--green)}
   .detail .desc{color:var(--muted);font-size:14.5px;line-height:1.8;margin:12px 0 16px;text-align:right}
   .detail .act{display:flex;gap:9px}
+
+  /* Telnet command + copy (left detail column & system column) */
+  .telnet-box{margin:0 0 14px;text-align:right;border:1px solid var(--line2);border-radius:12px;padding:12px;background:#0b0f22}
+  .telnet-head{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14.5px;color:var(--text);margin-bottom:9px}
+  .telnet-head svg{width:19px;height:19px;flex:none}
+  .code-box{direction:ltr;text-align:left;background:#070a18;border:1px solid var(--line);border-radius:9px;padding:10px 11px}
+  .code-box code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;font-size:12.8px;line-height:1.7;color:#ffd970;white-space:normal;word-break:break-all}
+  .copy-btn{margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gold-soft);border-color:var(--gold2);color:var(--gold);flex:none}
+  .copy-btn svg{width:17px;height:17px;flex:none}
+  .telnet-hint{color:var(--muted2);font-size:12.5px;margin-top:8px;line-height:1.6}
+  .telnet-home{border-top:1px dashed var(--line2);padding-top:11px;margin-top:3px;display:flex;flex-direction:column;gap:2px}
+  .telnet-home .copy-btn{font-size:14.5px;min-height:42px;padding:8px 10px}
   .btn{
     flex:1;border-radius:11px;border:1px solid var(--line2);background:var(--surface3);
     color:var(--text);font-size:15.5px;font-weight:800;padding:10px 12px;min-height:46px;
@@ -329,6 +341,104 @@
     padding:5px 13px;color:var(--text);font-weight:700;font-size:13px;
   }
 
+  /* ---------- Motion & effects ---------- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes popIn{from{opacity:0;transform:scale(.965) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(55,201,120,.5),0 0 8px rgba(55,201,120,.8)}50%{box-shadow:0 0 0 6px rgba(55,201,120,0),0 0 13px rgba(55,201,120,.95)}}
+  @keyframes goldPulse{0%,100%{opacity:1}50%{opacity:.45}}
+  @keyframes barShine{from{transform:translateX(220%)}to{transform:translateX(-220%)}}
+  @keyframes copyPop{0%{transform:scale(1)}40%{transform:scale(.955)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+  @keyframes toastIn{from{opacity:0;transform:translateX(50%) translateY(16px) scale(.95)}to{opacity:1;transform:translateX(50%) translateY(0) scale(1)}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 0 1px var(--gold),0 0 10px rgba(233,185,73,.18)}50%{box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(233,185,73,.4)}}
+
+  /* Soft entrance: header, chips, then the three columns staggered */
+  .topbar{animation:fadeUp .55s cubic-bezier(.22,.8,.32,1) backwards}
+  .compat{animation:fadeUp .55s .07s cubic-bezier(.22,.8,.32,1) backwards}
+  .remote{animation:fadeIn .6s .25s ease backwards}
+  .layout{animation:fadeIn .3s ease backwards}
+  .layout > *{animation:fadeUp .6s cubic-bezier(.22,.8,.32,1) backwards}
+  .layout > *:nth-child(2){animation-delay:.09s}
+  .layout > *:nth-child(3){animation-delay:.18s}
+  .layout.layout-enter{animation:fadeIn .35s ease backwards}
+
+  /* Staggered entrance for dynamically rendered items (delay set via --d) */
+  .nav-list button,.cat-list button,.row-item,.tile,.plug-row{
+    animation:fadeUp .45s cubic-bezier(.22,.8,.32,1) backwards;
+    animation-delay:var(--d,0ms);
+  }
+  .detail.anim{animation:popIn .38s cubic-bezier(.22,.8,.32,1) backwards}
+  .detail .big-thumb{animation:popIn .45s cubic-bezier(.22,.8,.32,1) backwards}
+  .empty{animation:fadeUp .4s ease backwards}
+
+  /* Hover: gentle lift + soft gold glow */
+  .row-item,.plug-row{transition:border-color .2s ease,transform .2s ease,box-shadow .25s ease}
+  .row-item:hover,.plug-row:hover{
+    transform:translateY(-3px);
+    border-color:var(--gold2);
+    box-shadow:0 10px 26px rgba(0,0,0,.35),0 0 0 1px rgba(233,185,73,.22),0 0 18px rgba(233,185,73,.12);
+  }
+  .tile{transition:border-color .2s ease,transform .2s ease,box-shadow .25s ease}
+  .tile:hover{
+    transform:translateY(-4px);
+    border-color:var(--gold2);
+    box-shadow:0 14px 30px rgba(0,0,0,.38),0 0 0 1px rgba(233,185,73,.22),0 0 20px rgba(233,185,73,.14);
+  }
+  .row-item .thumb,.tile .thumb,.plug-row .thumb{transition:transform .2s ease,border-color .2s ease}
+  .row-item:hover .thumb,.tile:hover .thumb,.plug-row:hover .thumb{transform:scale(1.07);border-color:var(--gold2)}
+  .row-item.selected,.tile.selected,.plug-row.selected{animation:glowPulse 2.4s ease-in-out infinite}
+  .btn{transition:filter .18s ease,background .18s ease,transform .18s ease,box-shadow .22s ease}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.3),0 0 14px rgba(233,185,73,.16)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn.gold:hover{box-shadow:0 6px 20px rgba(0,0,0,.32),0 0 18px rgba(233,185,73,.35)}
+  .icon-btn{transition:border-color .18s ease,background .18s ease,transform .18s ease,box-shadow .22s ease}
+  .icon-btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.3),0 0 14px rgba(233,185,73,.18)}
+  .icon-btn:active{transform:scale(.94)}
+  .nav-list button,.cat-list button{transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+  .nav-list button:hover,.cat-list button:hover{transform:translateX(-3px)}
+  .nav-list button.active,.cat-list button.active{transition:background .25s ease,color .25s ease,box-shadow .25s ease}
+  .cat-list .cnt{transition:background .25s ease,color .25s ease,border-color .25s ease,transform .18s ease}
+  .cat-list button:hover .cnt{transform:scale(1.08)}
+  .view-toggle button{transition:background .25s ease,color .25s ease,box-shadow .25s ease,transform .15s ease}
+  .view-toggle button:active{transform:scale(.96)}
+  .view-toggle button.active{box-shadow:0 0 14px rgba(233,185,73,.35)}
+  .search-wrap{transition:border-color .2s ease,box-shadow .25s ease}
+  .search-wrap:focus-within{box-shadow:0 0 0 1px rgba(233,185,73,.35),0 0 18px rgba(233,185,73,.14)}
+  .rbtn{transition:background .18s ease,transform .18s ease}
+  .rbtn:hover{transform:translateY(-1px)}
+  .rbtn:active{transform:scale(.97)}
+  .rbtn .dot{transition:transform .18s ease}
+  .rbtn:hover .dot{transform:scale(1.25)}
+  .compat .chip{transition:border-color .18s ease,color .18s ease,transform .18s ease}
+  .compat .chip:hover{border-color:var(--gold2);color:var(--gold);transform:translateY(-1px)}
+  .badge{transition:background .25s ease,color .25s ease,border-color .25s ease}
+  button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  /* Live network dot + system bars */
+  .netstat .dot{animation:dotPulse 2.2s ease-in-out infinite}
+  .bar i{position:relative;overflow:hidden;transition:width .9s cubic-bezier(.22,.8,.32,1)}
+  .bar i::after{
+    content:"";position:absolute;inset:0;width:45%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+    animation:barShine 2.8s ease-in-out infinite;
+  }
+  .speeds .v{transition:color .2s ease}
+  .speeds.testing .v{animation:goldPulse .45s ease-in-out infinite}
+  .speeds.testing{border-top-color:var(--gold2)}
+
+  /* Copy button success state */
+  .copy-btn{transition:background .2s ease,color .2s ease,border-color .2s ease,transform .18s ease,box-shadow .22s ease}
+  .copy-btn:hover{box-shadow:0 0 16px rgba(233,185,73,.25)}
+  .copy-btn.copied{
+    background:var(--gold);border-color:var(--gold);color:#171106;
+    animation:copyPop .38s ease;box-shadow:0 0 20px rgba(233,185,73,.4);
+  }
+  .copy-btn.copied svg{stroke:#171106}
+
+  /* Toast confirmation */
+  .toast{box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 22px rgba(233,185,73,.22)}
+  .toast.show{animation:toastIn .35s cubic-bezier(.22,.8,.32,1) backwards}
+
   @media (max-width:1080px){
     .layout,.layout.browser{grid-template-columns:210px 1fr}
     .sys-col{grid-column:1 / -1}
@@ -360,7 +470,7 @@
     .search-wrap{order:5;max-width:none}
   }
   @media (prefers-reduced-motion:reduce){
-    *{transition:none !important}
+    *,*::before,*::after{transition:none !important;animation:none !important}
   }
 </style>
 </head>
@@ -444,6 +554,17 @@
       <div class="speeds">
         <div class="line"><span class="k">التنزيل</span><span class="v" id="dlSpeed">5.9 Mbps</span></div>
         <div class="line"><span class="k">الرفع</span><span class="v" id="ulSpeed">2.7 Mbps</span></div>
+      </div>
+      <div class="telnet-home">
+        <div class="telnet-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#e9b949" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M12.5 15H17"/></svg>
+          <span>اتصال التلنت</span>
+        </div>
+        <div class="code-box"><code id="homeTelnetCmd">telnet 192.168.0.10</code></div>
+        <button class="btn copy-btn" id="homeCopyBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#e9b949" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          نسخ الأمر
+        </button>
       </div>
     </div>
   </aside>
@@ -534,6 +655,8 @@
     clean: ic('<path d="M4 7h16M9 7V4h6v3M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7A1.5 1.5 0 0 0 17 20l1-13"/>'),
     globe: ic('<circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.7 2.6 4 5.7 4 9.2s-1.3 6.6-4 9.2c-2.7-2.6-4-5.7-4-9.2s1.3-6.6 4-9.2Z"/>'),
     restart: ic('<path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 3v4h-4"/>'),
+    terminal: ic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M12.5 15H17"/>'),
+    copy: ic('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
     sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>')
   };
 
@@ -663,6 +786,41 @@
   };
 
   var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Telnet command (copy-only) ---------- */
+  function slugify(n){
+    return n.toLowerCase().replace(/\(.*?\)/g,'').replace(/[^a-z0-9]+/g,'');
+  }
+  function telnetCmd(p){
+    var pkg = 'enigma2-plugin-extensions-' + slugify(p.name);
+    return p.installed ? ('opkg remove ' + pkg) : ('opkg update && opkg install ' + pkg);
+  }
+  function animateCopyBtn(btn){
+    if (!btn || btn.classList.contains('copied')) return;
+    var original = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M20 6 9 17l-5-5"/></svg>تم النسخ';
+    setTimeout(function(){
+      btn.classList.remove('copied');
+      btn.innerHTML = original;
+    }, 1700);
+  }
+  function copyText(txt, btn){
+    function done(){ animateCopyBtn(btn); toast('تم نسخ الأمر — الصقه في التلنت على الرسيفر'); }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = txt; ta.setAttribute('readonly','');
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); }
+      catch(e){ toast('حدّد الأمر وانسخه يدويًا'); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, fallback);
+    } else { fallback(); }
+  }
+
   var toastTimer = null;
   function toast(msg){
     var t = $('toast'); t.textContent = msg; t.classList.add('show');
@@ -684,8 +842,8 @@
 
   /* ---------- Home: nav ---------- */
   function renderNav(){
-    $('navList').innerHTML = SECTIONS.map(function(s){
-      return '<li><button data-sec="'+s.id+'" class="'+(state.section===s.id?'active':'')+'">'
+    $('navList').innerHTML = SECTIONS.map(function(s, i){
+      return '<li><button data-sec="'+s.id+'" style="--d:'+(i*45)+'ms" class="'+(state.section===s.id?'active':'')+'">'
         + ICONS[s.icon] + '<span>'+s.name+'</span></button></li>';
     }).join('');
     var btns = $('navList').querySelectorAll('button');
@@ -720,15 +878,15 @@
     $('sectionCount').textContent = items.length + ' عنصر — صفحة 1/1';
 
     if (state.viewMode === 'grid'){
-      box.innerHTML = '<div class="grid-view">' + items.map(function(it){
-        return '<button class="tile'+(state.selectedItem===it.id?' selected':'')+'" data-item="'+it.id+'">'
+      box.innerHTML = '<div class="grid-view">' + items.map(function(it, i){
+        return '<button class="tile'+(state.selectedItem===it.id?' selected':'')+'" style="--d:'+(i*40)+'ms" data-item="'+it.id+'">'
           + '<span class="thumb">'+ICONS[it.icon]+'</span>'
           + '<span class="t1">'+it.name+'</span>'
           + '<span class="t2">'+it.desc+'</span></button>';
       }).join('') + '</div>';
     } else {
-      box.innerHTML = '<div class="item-list">' + items.map(function(it){
-        return '<button class="row-item'+(state.selectedItem===it.id?' selected':'')+'" data-item="'+it.id+'">'
+      box.innerHTML = '<div class="item-list">' + items.map(function(it, i){
+        return '<button class="row-item'+(state.selectedItem===it.id?' selected':'')+'" style="--d:'+(i*40)+'ms" data-item="'+it.id+'">'
           + '<span class="thumb">'+ICONS[it.icon]+'</span>'
           + '<span class="tt"><span class="t1">'+it.name+'</span><div class="t2">'+it.desc+'</div></span>'
           + (it.open ? '<span class="go">فتح ‹</span>' : '')
@@ -767,8 +925,8 @@
   }
 
   function renderCats(){
-    $('catList').innerHTML = CATEGORIES.map(function(c){
-      return '<li><button data-cat="'+c.id+'" class="'+(state.category===c.id?'active':'')+'">'
+    $('catList').innerHTML = CATEGORIES.map(function(c, i){
+      return '<li><button data-cat="'+c.id+'" style="--d:'+(i*35)+'ms" class="'+(state.category===c.id?'active':'')+'">'
         + '<span>'+c.name+'</span><span class="cnt">'+c.count+'</span></button></li>';
     }).join('');
     var idx = CATEGORIES.findIndex(function(c){ return c.id===state.category; });
@@ -796,7 +954,7 @@
     }
     if (state.selectedPlugin >= list.length) state.selectedPlugin = 0;
     box.innerHTML = list.map(function(p, i){
-      return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" data-idx="'+i+'">'
+      return '<button class="plug-row'+(state.selectedPlugin===i?' selected':'')+'" style="--d:'+(i*40)+'ms" data-idx="'+i+'">'
         + '<span class="thumb">'+ICONS.link+(p.installed?'<span class="x">×</span>':'')+'</span>'
         + '<span class="nm">'+p.name+'</span>'
         + (p.ver ? '<span class="ver">'+p.ver+'</span>' : '')
@@ -815,6 +973,9 @@
 
   function renderDetail(p){
     var box = $('detailCard');
+    box.classList.remove('anim');
+    void box.offsetWidth;
+    box.classList.add('anim');
     var info = catInfo();
     if (!p){
       box.innerHTML = '<p style="color:var(--muted);margin:26px 0">اختر إضافة من القائمة لعرض تفاصيلها.</p>';
@@ -829,11 +990,18 @@
       +   '<div class="line"><span class="k">الفئة</span><span class="v">'+info.name+'</span></div>'
       + '</div>'
       + '<p class="desc">'+p.desc+'</p>'
+      + '<div class="telnet-box">'
+      +   '<div class="telnet-head">'+ICONS.terminal+'<span>'+(p.installed?'أمر الإزالة بالتلنت':'أمر التثبيت بالتلنت')+'</span></div>'
+      +   '<div class="code-box"><code>'+telnetCmd(p)+'</code></div>'
+      +   '<button class="btn copy-btn" id="copyCmdBtn" type="button">'+ICONS.copy+'نسخ الأمر</button>'
+      +   '<div class="telnet-hint">انسخ الأمر والصقه بنفسك في التلنت على الرسيفر.</div>'
+      + '</div>'
       + '<div class="act">'
       + (p.installed
           ? '<button class="btn danger" id="detailAct">إزالة</button>'
           : '<button class="btn gold" id="detailAct">تثبيت</button>')
       + '</div>';
+    $('copyCmdBtn').addEventListener('click', function(){ copyText(telnetCmd(p), this); });
     $('detailAct').addEventListener('click', function(){
       p.installed = !p.installed;
       toast(p.installed ? ('تم تثبيت ' + p.name) : ('تمت إزالة ' + p.name));
@@ -847,10 +1015,16 @@
     for (var i=0;i<kids.length;i++) kids[i].scrollTop = 0;
   }
 
+  function enterLayout(el){
+    el.classList.remove('layout-enter');
+    void el.offsetWidth;
+    el.classList.add('layout-enter');
+  }
   function openBrowser(){
     state.inBrowser = true;
     $('homeLayout').hidden = true;
     $('browserLayout').hidden = false;
+    enterLayout($('browserLayout'));
     $('remoteHome').hidden = true;
     $('remoteBrowser').hidden = false;
     $('searchWrap').hidden = false;
@@ -862,6 +1036,7 @@
     state.inBrowser = false;
     $('homeLayout').hidden = false;
     $('browserLayout').hidden = true;
+    enterLayout($('homeLayout'));
     $('remoteHome').hidden = false;
     $('remoteBrowser').hidden = true;
     $('searchWrap').hidden = true;
@@ -882,6 +1057,8 @@
   function speedTest(){
     if (testing) return; testing = true;
     toast('جارٍ اختبار سرعة الاتصال…');
+    var speedsBox = document.querySelector('.speeds');
+    if (speedsBox) speedsBox.classList.add('testing');
     var dl = $('dlSpeed'), ul = $('ulSpeed');
     var steps = 0;
     var iv = setInterval(function(){
@@ -892,6 +1069,7 @@
         clearInterval(iv);
         var fdl = (Math.random()*22+18).toFixed(1), ful = (Math.random()*6+5).toFixed(1);
         dl.textContent = fdl + ' Mbps'; ul.textContent = ful + ' Mbps';
+        if (speedsBox) speedsBox.classList.remove('testing');
         testing = false;
         toast('اكتمل الاختبار — التنزيل ' + fdl + ' Mbps، الرفع ' + ful + ' Mbps');
       }
@@ -914,12 +1092,26 @@
     });
   });
 
+  $('homeCopyBtn').addEventListener('click', function(){ copyText($('homeTelnetCmd').textContent, this); });
+
   $('cartBtn').addEventListener('click', function(){ toast('سلة التنزيلات فارغة'); });
   $('bellBtn').addEventListener('click', function(){ toast('لا توجد إشعارات جديدة'); });
 
   /* ---------- Init ---------- */
   renderNav();
   renderCenter();
+
+  /* System bars grow from zero on load */
+  (function animateBars(){
+    var bars = [$('hddBar'), $('ramBar')];
+    var targets = bars.map(function(b){ return b ? b.style.width : ''; });
+    bars.forEach(function(b){ if (b) b.style.width = '0%'; });
+    requestAnimationFrame(function(){
+      setTimeout(function(){
+        bars.forEach(function(b, i){ if (b) b.style.width = targets[i]; });
+      }, 200);
+    });
+  })();
 })();
 </script>
 </body>
