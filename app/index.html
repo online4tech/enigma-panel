@@ -533,7 +533,7 @@
         { id:"skins",    name:"السكينات",     color:"#b78cff", sub:"واجهات تغيّر شكل القوائم والإنفوبار", icon:'<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="14.5" r="1.3" fill="currentColor" stroke="none"/><path d="M12 21a2.4 2.4 0 0 1 0-4.8c1 0 1.6-.6 1.6-1.4"/>' },
         { id:"panels",   name:"البانلات",     color:"#ff5c7a", sub:"لوحات خارجية تجمع إضافات وأدوات", icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 9v11"/>' },
         { id:"display",  name:"العرض",        color:"#2dd4bf", sub:"شاشة الرسيفر الأمامية ودقة الصورة والبوت لوجو", icon:'<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M9 21h6"/><path d="M12 17v4"/>' },
-        { id:"catalog",  name:"كتالوج المستودع", color:"#d946ef", sub:"إضافات وسكينات مستودع Online4Tech بفئاتها وأوامر تثبيتها", icon:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>' }
+        { id:"tools",    name:"الأدوات",       color:"#d946ef", sub:"أدوات النظام والتحديث والترقية وصيانة الرسيفر", icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34 1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87 1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/>' }
       ];
 
       function it(sec, name, en, ver, size, desc, pkg, featured){
@@ -602,7 +602,7 @@
         it("display","شاشات الانتظار","VFD Display Pack","—","—","حزم أيقونات ونصوص لشاشة VFD الأمامية في أجهزة Vu+ و Dreambox.","enigma2-plugin-extensions-vfddisplay")
       ];
 
-      /* -------- كتالوج مستودع Online4Tech (data/plugins.json — ٨٢ عنصرًا، مدموج التكرارات) -------- */
+      /* -------- عناصر مستودع Online4Tech (data/plugins.json — موزعة على الأقسام حسب فئة كل عنصر) -------- */
       var CATALOG = [
         { id:"ajpanel", name:"AjPanel", cats:["Utilities"], ver:"10.8.6", author:"AMAJamry", desc:"لوحة أدوات لإدارة وظائف متعددة على جهاز Enigma2.", source:"https://github.com/AMAJamry/AJPanel", variants:[], cmds:[{ label:"AJPanel — المصدر الرسمي", command:"wget https://raw.githubusercontent.com/AMAJamry/AJPanel/main/installer.sh -O - | /bin/sh" }, { label:"AjPanel — biko-73", command:"wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/biko-73/AjPanel/main/installer.sh -O - | /bin/sh" }, { label:"ajpanel_menu1 — tarekzoka", command:"wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/tarekzoka/ajpanel/refs/heads/main/ajpanel_menu1.sh -O - | /bin/sh" }] },
         { id:"mystreamer", name:"MyStreamer", cats:["Streaming"], ver:"1.0.0", author:"Online4Tech catalog", desc:"يوفّر واجهة للوصول إلى مواقع عربية للأفلام والمسلسلات وبعض المحتوى الرياضي.", source:"https://github.com/popking159/MyStreamer", variants:[], cmds:[] },
@@ -683,9 +683,30 @@
         { id:"alternative-softcam-manager", name:"Alternative Softcam Manager", cats:["Softcam"], ver:"من المستودع المصدر", author:"emilnabil", desc:"أرشيف Alternative Softcam Manager.", source:"https://github.com/emilnabil/download-plugins", variants:[], cmds:[] },
       ];
 
+      /* توزيع عناصر المستودع على الأقسام الموجودة حسب فئة كل عنصر */
+      var PANEL_IDS = { "ajpanel":1, "ajpanel-menu1":1, "emilpanelpro":1, "emil-panel-lite":1, "smartaddonspanel-han":1, "smartaddonspanel-emil":1 };
+      var CAT_TO_SECTION = {
+        "Utilities":"plugins", "Media":"plugins", "Media Players":"plugins", "Streaming":"plugins",
+        "File Managers":"plugins", "Developer Tools":"plugins", "Weather":"plugins", "Network":"plugins",
+        "IPTV":"feeds", "IPTV Plugins":"feeds",
+        "Softcam":"softcams",
+        "Picons":"picons",
+        "Skins":"skins",
+        "EPG":"display", "EPG Plugins":"display", "Settings":"display",
+        "System Tools":"tools"
+      };
+      function targetSection(c){
+        if (c.id === "picons") return "picons";
+        if (PANEL_IDS[c.id]) return "panels";
+        for (var i = 0; i < c.cats.length; i++){
+          if (CAT_TO_SECTION[c.cats[i]]) return CAT_TO_SECTION[c.cats[i]];
+        }
+        return "tools";
+      }
       CATALOG.forEach(function(c){
-        ITEMS.push({ sec:"catalog", name:c.name, en:c.name, ver:c.ver, size:"—", desc:c.desc,
-          pkg:c.id, featured:false, key:"catalog:" + c.id, catalog:true,
+        var sec = targetSection(c);
+        ITEMS.push({ sec:sec, name:c.name, en:c.name, ver:c.ver, size:"—", desc:c.desc,
+          pkg:c.id, featured:false, key:sec + ":" + c.id, catalog:true,
           cats:c.cats, author:c.author, source:c.source, variants:c.variants, cmds:c.cmds,
           installCmd: c.cmds.length ? c.cmds[0].command : "", removeCmd:"" });
       });
@@ -696,7 +717,7 @@
       /* ================= State (in-memory only) ================= */
       var installed = {};          /* key -> true */
       var currentSection = null;
-      var catalogCat = null;       /* فئة الكتالوج المختارة في الفلتر — null يعني الكل */
+      var sectionCat = null;       /* فئة الفلتر المختارة داخل القسم الحالي — null يعني الكل */
       var AR_DIGITS = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
       function arNum(n){ return String(n).replace(/\d/g, function(d){ return AR_DIGITS[+d]; }); }
       function sectionById(id){ for (var i=0;i<SECTIONS.length;i++) if (SECTIONS[i].id===id) return SECTIONS[i]; return null; }
@@ -833,16 +854,16 @@
         titleEl.style.color = s.color;
         document.getElementById("section-sub").textContent = s.sub + " — " + arNum(itemsOf(id).length) + " عنصر";
         document.getElementById("section-search").value = "";
-        if (id === "catalog") catalogCat = null;
+        sectionCat = null;
         renderChips();
         renderInto(document.getElementById("section-items"), itemsOf(id), "لا توجد عناصر في هذا القسم");
         show("section");
       }
 
-      /* ---------- فلتر فئات الكتالوج ---------- */
+      /* ---------- فلتر فئات القسم ---------- */
       function catFiltered(list){
-        if (currentSection !== "catalog" || !catalogCat) return list;
-        return list.filter(function(x){ return x.cats && x.cats.indexOf(catalogCat) !== -1; });
+        if (!sectionCat) return list;
+        return list.filter(function(x){ return x.cats && x.cats.indexOf(sectionCat) !== -1; });
       }
       function refreshSectionList(){
         if (!currentSection) return;
@@ -853,14 +874,14 @@
       }
       function renderChips(){
         var box = document.getElementById("section-chips");
-        if (currentSection !== "catalog"){ box.hidden = true; box.innerHTML = ""; return; }
+        var all = itemsOf(currentSection);
         var cats = [];
-        CATALOG.forEach(function(c){ c.cats.forEach(function(ct){ if (cats.indexOf(ct) === -1) cats.push(ct); }); });
-        var all = itemsOf("catalog");
-        var html = '<button type="button" class="chip' + (!catalogCat ? " active" : "") + '" data-cat="">الكل (' + arNum(all.length) + ')</button>';
+        all.forEach(function(x){ if (x.cats) x.cats.forEach(function(ct){ if (cats.indexOf(ct) === -1) cats.push(ct); }); });
+        if (cats.length <= 1){ box.hidden = true; box.innerHTML = ""; return; }
+        var html = '<button type="button" class="chip' + (!sectionCat ? " active" : "") + '" data-cat="">الكل (' + arNum(all.length) + ')</button>';
         cats.forEach(function(ct){
-          var n = all.filter(function(x){ return x.cats.indexOf(ct) !== -1; }).length;
-          html += '<button type="button" class="chip' + (catalogCat === ct ? " active" : "") + '" data-cat="' + esc(ct) + '"><span dir="ltr">' + esc(ct) + '</span> (' + arNum(n) + ')</button>';
+          var n = all.filter(function(x){ return x.cats && x.cats.indexOf(ct) !== -1; }).length;
+          html += '<button type="button" class="chip' + (sectionCat === ct ? " active" : "") + '" data-cat="' + esc(ct) + '"><span dir="ltr">' + esc(ct) + '</span> (' + arNum(n) + ')</button>';
         });
         box.innerHTML = html;
         box.hidden = false;
@@ -932,7 +953,7 @@
         if (copyBtn){ copyText(copyBtn.getAttribute("data-copy"), copyBtn); return; }
 
         var chip = e.target.closest("[data-cat]");
-        if (chip){ catalogCat = chip.getAttribute("data-cat") || null; renderChips(); refreshSectionList(); return; }
+        if (chip){ sectionCat = chip.getAttribute("data-cat") || null; renderChips(); refreshSectionList(); return; }
 
         var tile = e.target.closest("[data-section]");
         if (tile){ openSection(tile.getAttribute("data-section")); return; }
